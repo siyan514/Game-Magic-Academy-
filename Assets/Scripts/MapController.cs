@@ -4,19 +4,24 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
-     public GameObject superWallPre;
-     private int X, Y;
+    public GameObject superWallPre, wallPre, propPre;
+    private int X, Y;
+    private List<Vector2> emptyPointList = new List<Vector2>();
 
     private void Awake()
     {
-        initMap(8, 9);
+        initMap(5, 3, 20);
     }
 
-    public void initMap(int x, int y)
+    public void initMap(int x, int y, int wallCount)
     {
         Y = y;
         X = x;
         createSuperWall();
+        findEmptyPoint();
+        Debug.Log(emptyPointList.Count);
+        CreateWall(wallCount);
+        createProps();
     }
 
     /// <summary>
@@ -59,11 +64,55 @@ public class MapController : MonoBehaviour
     {
         for(int x =  -(X + 1); x <= X - 1; x++)
         {
-
-            for(int y = -(Y + 1); y <= Y-1; y++)
+            if(-(X + 1) % 2 == x % 2)
             {
-
+                for (int y = -(Y + 1); y <= Y - 1; y++)
+                {
+                    emptyPointList.Add(new Vector2(x, y));
+                }
             }
+            else
+            {
+                for (int y = -(Y + 1); y <= Y - 1; y += 2)
+                {
+                    emptyPointList.Add(new Vector2(x, y));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// create the obstacles that can be destroyed
+    /// </summary>
+    private void CreateWall(int wallCount)
+    {
+        if(wallCount >= emptyPointList.Count)
+        {
+            wallCount = (int)(emptyPointList.Count*0.7f);
+        }
+        for(int i = 0; i < wallCount; i++)
+        {
+            int index = Random.Range(0, emptyPointList.Count);
+            GameObject wall = Instantiate(wallPre, transform);
+            wall.transform.position = emptyPointList[index];
+
+            emptyPointList.RemoveAt(index);
+        }
+    }
+
+    /// <summary>
+    /// generate prop
+    /// </summary>
+    private void createProps()
+    {
+        int count = Random.Range(0, 2 + (int)(emptyPointList.Count*0.05f));
+        for (int i = 0;i < count;i++)
+        {
+            GameObject prop = Instantiate(propPre, transform);
+            int index = Random.Range(0, emptyPointList.Count);
+            prop.transform.position = emptyPointList[index];
+
+            emptyPointList.RemoveAt(index);
         }
     }
 }

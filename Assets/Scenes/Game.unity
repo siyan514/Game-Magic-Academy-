@@ -243,7 +243,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fd008f3b057daa4c817b4803f987d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  superWallPre: {fileID: 1614812204446126013, guid: 6dba59d204e9b4f4ca1ca0f6c5371001, type: 3}
+  superWallPre: {fileID: 5051396928302141153, guid: d2a4fb1ab1d6cd846880798d5c4b3ab3, type: 3}
+  wallPre: {fileID: 1614812204446126013, guid: 6dba59d204e9b4f4ca1ca0f6c5371001, type: 3}
+  propPre: {fileID: 7465386373915321946, guid: 5c836c4fab4340c41b6169c2a3df118f, type: 3}
 --- !u!4 &2088887260
 Transform:
   m_ObjectHideFlags: 0
