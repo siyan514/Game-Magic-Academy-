@@ -8,9 +8,9 @@ public class MapController : MonoBehaviour
     private int X, Y;
     private List<Vector2> emptyPointList = new List<Vector2>();
 
-    private void Awake()
+    public Vector2 GetPlayerPos()
     {
-        initMap(5, 3, 20);
+        return new Vector2(-(X + 1), Y - 1);
     }
 
     public void initMap(int x, int y, int wallCount)
@@ -79,6 +79,9 @@ public class MapController : MonoBehaviour
                 }
             }
         }
+        emptyPointList.Remove(new Vector2(-(X+1),Y-1));
+        emptyPointList.Remove(new Vector2(-(X+1),Y));
+        emptyPointList.Remove(new Vector2(-X,Y-1));
     }
 
     /// <summary>
