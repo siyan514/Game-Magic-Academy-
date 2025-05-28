@@ -7,6 +7,19 @@ public class MapController : MonoBehaviour
     public GameObject superWallPre, wallPre, propPre;
     private int X, Y;
     private List<Vector2> emptyPointList = new List<Vector2>();
+    private List<Vector2> superWallPointList = new List<Vector2>();
+
+    /// <summary>
+    /// Determine whether the current position is an actual wall
+    /// </summary>
+    /// <param name="pos">Current position</param>
+    /// <returns></returns>
+    public bool IsSuperWall(Vector2 pos)
+    {
+        if(superWallPointList.Contains(pos)) 
+            return true;
+        return false;
+    }
 
     public Vector2 GetPlayerPos()
     {
@@ -29,13 +42,12 @@ public class MapController : MonoBehaviour
     /// </summary>
     private void createSuperWall()
     {
-    for (int x = -X; x < X; x += 2)
+        for (int x = -X; x < X; x += 2)
         {
-        for (int y = -Y; y < Y; y += 2)
-        {
-            GameObject wall = Instantiate(superWallPre, transform);
-            wall.transform.position = new Vector2(x, y);
-        }
+            for (int y = -Y; y < Y; y += 2)
+            {
+                spawnSuperWall(new Vector2(x,y));
+            }
         }
 
         for (int x = -(X + 2); x <= X; x++)
@@ -53,6 +65,7 @@ public class MapController : MonoBehaviour
 
     private void spawnSuperWall(Vector2 pos)
     {
+        superWallPointList.Add(pos);
         GameObject wall = Instantiate(superWallPre, transform);
         wall.transform.position = pos;
     }
@@ -80,7 +93,7 @@ public class MapController : MonoBehaviour
             }
         }
         emptyPointList.Remove(new Vector2(-(X+1),Y-1));
-        emptyPointList.Remove(new Vector2(-(X+1),Y));
+        emptyPointList.Remove(new Vector2(-(X+1),Y-2));
         emptyPointList.Remove(new Vector2(-X,Y-1));
     }
 

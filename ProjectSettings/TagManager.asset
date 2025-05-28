@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - BombEffect
   layers:
   - Default
   - TransparentFX
@@ -46,6 +47,9 @@ TagManager:
     locked: 0
   - name: wall
     uniqueID: 3612606391
+    locked: 0
+  - name: bomb
+    uniqueID: 129226523
     locked: 0
   - name: player
     uniqueID: 1047265161

@@ -1,0 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Tags
+{
+    public const string SuperWall = "SuperWall";
+    public const string Wall = "Wall";
+    public const string BombEffect = "BombEffect";
+}

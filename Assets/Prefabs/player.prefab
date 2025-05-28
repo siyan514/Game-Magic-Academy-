@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8085732219538124207}
   - component: {fileID: 5118822025800680}
   - component: {fileID: 7108087346177661801}
-  - component: {fileID: 7251169474101635104}
+  - component: {fileID: -7833590923246241744}
   - component: {fileID: 2396786536693230395}
   - component: {fileID: 1814498886325427612}
   m_Layer: 0
@@ -109,7 +109,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7251169474101635104
+--- !u!114 &-7833590923246241744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ef0889e135d73418c4159874b57f41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bombPre: {fileID: 1437385972316113153, guid: ecf13c2bac0235546b8974b171c91057, type: 3}
 --- !u!50 &2396786536693230395
 Rigidbody2D:
   serializedVersion: 4
@@ -192,16 +193,19 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.020278722, y: -0.08802579}
-      - {x: -0.16358896, y: -0.07648992}
-      - {x: -0.18041919, y: -0.08755208}
-      - {x: -0.18330313, y: -0.18762907}
-      - {x: -0.13595462, y: -0.20902196}
-      - {x: -0.10460258, y: -0.23826925}
+    - - {x: 0.019547611, y: -0.02049411}
+      - {x: -0.14454159, y: -0.007226564}
+      - {x: -0.21802416, y: 0.008240273}
+      - {x: -0.17324926, y: -0.10210592}
+      - {x: -0.18593863, y: -0.1580245}
+      - {x: -0.17983995, y: -0.20494504}
+      - {x: -0.13941781, y: -0.23672716}
+      - {x: -0.10633415, y: -0.24865878}
       - {x: 0.093405366, y: -0.24795538}
-      - {x: 0.118414104, y: -0.20637488}
-      - {x: 0.1732547, y: -0.20343073}
-      - {x: 0.19956416, y: -0.15438874}
-      - {x: 0.20041573, y: -0.09058293}
-      - {x: 0.13860199, y: -0.086583816}
+      - {x: 0.15304571, y: -0.24446979}
+      - {x: 0.18883891, y: -0.210357}
+      - {x: 0.19078223, y: -0.13879319}
+      - {x: 0.20398259, y: -0.08211091}
+      - {x: 0.21782987, y: 0.0017461809}
+      - {x: 0.15072307, y: -0.010394342}
   m_UseDelaunayMesh: 0
