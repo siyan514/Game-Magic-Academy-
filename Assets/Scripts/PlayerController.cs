@@ -17,7 +17,12 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color color;
     private bool isInjured = false;
-    
+    private int playerIndex;
+    private bool placeBomb = false;
+
+    private bool isInvincible = false; // 是否处于无敌状态
+    private float invincibleTimer = 0f; // 无敌时间计时器
+
     /// <summary>
     /// Add the moving speed of player.
     /// </summary>
@@ -42,17 +47,74 @@ public class PlayerController : MonoBehaviour
     /// <param name="range"></param>
     /// <param name="HP"></param>
     /// <param name="bombTime"></param>
-    public void Init(int range, int HP, float bombTime)
+    public void Init(int range, int HP, float bombTime, int index)
     {
         this.range = range;
         this.HP = HP;
         this.bombTime = bombTime;
+        this.playerIndex = index;
     }
 
     private void Update()
     {
         Move();
         CreateBomb();
+
+        if (isInvincible)
+        {
+            invincibleTimer -= Time.deltaTime;
+            if (invincibleTimer <= 0f)
+            {
+                isInvincible = false;
+                spriteRenderer.color = Color.white; // 恢复颜色
+            }
+        }
+    }
+
+    /// <summary>
+    /// 激活无敌状态
+    /// </summary>
+    public void ActivateInvincibility(float duration)
+    {
+        isInvincible = true;
+        invincibleTimer = duration;
+        StartCoroutine(InvincibleEffect());
+    }
+
+    IEnumerator InvincibleEffect()
+    {
+        Color originalColor = spriteRenderer.color;
+
+        while (isInvincible)
+        {
+            Color[] rainbowColors = new Color[]
+            {
+            Color.red,
+            Color.yellow,
+            Color.green,
+            Color.cyan,
+            Color.blue,
+            Color.magenta
+            };
+
+            for (int i = 0; i < rainbowColors.Length; i++)
+            {
+                Color startColor = rainbowColors[i];
+                Color endColor = rainbowColors[(i + 1) % rainbowColors.Length];
+
+                float elapsedTime = 0;
+                float duration = 0.2f;
+
+                while (elapsedTime < duration)
+                {
+                    spriteRenderer.color = Color.Lerp(startColor, endColor, elapsedTime / duration);
+                    elapsedTime += Time.deltaTime;
+                    yield return null;
+                }
+            }
+        }
+
+        spriteRenderer.color = originalColor;
     }
 
     /// <summary>
@@ -60,9 +122,20 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        anim.SetFloat("Horizontal", h);
+        float h = 0, v = 0;
+
+        if (playerIndex == 1)
+        {
+            h = Input.GetAxis("Horizontal"); // WASD
+            v = Input.GetAxis("Vertical");
+        }
+        else if (playerIndex == 2)
+        {
+            h = Input.GetAxis("Horizontal2"); // direction key
+            v = Input.GetAxis("Vertical2");
+        }
+
+        anim.SetFloat("Horizontal", h); 
         anim.SetFloat("Vertical", v);
         rig.MovePosition(transform.position + new Vector3(h, v) * speed);
     }
@@ -72,7 +145,20 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void CreateBomb()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && bombCount > 0)
+        //player1 use the space key to place bomb
+        if (playerIndex == 1 && Input.GetKeyDown(KeyCode.Space))
+        {
+            placeBomb = true;
+        }
+        //player2 use the enter key to place bomb
+        else if (playerIndex == 2 &&
+                (Input.GetKeyDown(KeyCode.Return) ||
+                 Input.GetKeyDown(KeyCode.KeypadEnter)))
+        {
+            placeBomb = true;
+        }
+
+        if (placeBomb && bombCount > 0)
         {
             bombCount--;
             GameObject bomb = ObjectPool.instance.Get(ObjectType.Bomb, 
@@ -80,6 +166,7 @@ public class PlayerController : MonoBehaviour
                 Mathf.RoundToInt(transform.position.y)));
             bomb.GetComponent<BombController>().Init(range, bombTime, () => bombCount++);
         }
+        placeBomb = false;
     }
 
     /// <summary>
@@ -88,7 +175,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="collider"></param>
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (isInjured) return;
+        if (isInjured || isInvincible) return;
         isInjured = true;
         if (collider.CompareTag(Tags.BombEffect))
         {

@@ -72,6 +72,7 @@ public class PropController : MonoBehaviour
                     playerController.range++;
                     break; 
                 case PropType.defence:
+                    playerController.ActivateInvincibility(8f); // Activate 8-second invincibility
                     break;
                 case PropType.speed:
                     playerController.AddSpeed();

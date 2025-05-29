@@ -25,9 +25,17 @@ public class MapController : MonoBehaviour
         return superWallPointList.Contains(intPos);
     }
 
-    public Vector2 GetPlayerPos()
+    /// <summary>
+    /// By default, player 1 is located at the top left corner of the map, 
+    /// and player 2 is located at the bottom right corner of the map.
+    /// </summary>
+    /// <param name="playerIndex"></param>
+    /// <returns></returns>
+    public Vector2 GetPlayerPos(int playerIndex)
     {
-        return new Vector2(-(X + 1), Y - 1);
+        if (playerIndex == 1) return new Vector2(-(X + 1), Y - 1);
+        if (playerIndex == 2) return new Vector2(X - 1, -Y-1);
+        return new Vector2(1,1);
     }
 
     public void initMap(int x, int y, int wallCount)
@@ -37,7 +45,6 @@ public class MapController : MonoBehaviour
         X = x;
         createSuperWall();
         findEmptyPoint();
-        Debug.Log(emptyPointList.Count);
         CreateWall(wallCount);
         createProps();
     }
@@ -123,9 +130,12 @@ public class MapController : MonoBehaviour
                 }
             }
         }
-        emptyPointList.Remove(new Vector2(-(X+1),Y-1));
-        emptyPointList.Remove(new Vector2(-(X+1),Y-2));
-        emptyPointList.Remove(new Vector2(-X,Y-1));
+        emptyPointList.Remove(new Vector2(-(X + 1), Y - 1));
+        emptyPointList.Remove(new Vector2(-(X + 1), Y - 2));
+        emptyPointList.Remove(new Vector2(-X, Y - 1));
+        emptyPointList.Remove(new Vector2(X - 2, -Y - 1));
+        emptyPointList.Remove(new Vector2(X - 1, -Y - 1));
+        emptyPointList.Remove(new Vector2(X - 1, -Y));
     }
 
     /// <summary>
@@ -158,7 +168,7 @@ public class MapController : MonoBehaviour
     /// </summary>
     private void createProps()
     {
-        int count = Random.Range(0, 2 + (int)(emptyPointList.Count*0.05f));
+        int count = Random.Range(5, 10 + (int)(emptyPointList.Count*0.05f));
         for (int i = 0;i < count;i++)
         {
             int index = Random.Range(0, emptyPointList.Count);

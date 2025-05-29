@@ -5,11 +5,14 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     public static GameController instance;
-    public GameObject playerPre;
+    public static int playerCount = 2;
+    public GameObject playerPre1;
+    public GameObject playerPre2;
     private MapController mapController;
     private int levelCount = 0;
 
-    private GameObject player;
+    private GameObject player1;
+    private GameObject player2;
 
     private void Awake()
     {
@@ -30,6 +33,11 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private void CreatePlayers()
+    {
+
+    }
+
     private void LevelCtrl()
     {
         int x = 7 + 1 * (levelCount / 4);
@@ -38,13 +46,23 @@ public class GameController : MonoBehaviour
         if(y >= 8) y = 8;
 
         mapController.initMap(x, y, x*y);
-        if(player == null)
-        {
-            player = Instantiate(playerPre);
-        }
-        player.transform.position = mapController.GetPlayerPos();
-        player.GetComponent<PlayerController>().Init(1, 1, 1.5f);
 
+        if(player1 == null)
+        {
+            player1 = Instantiate(playerPre1);
+        }
+        player1.transform.position = mapController.GetPlayerPos(1);
+        player1.GetComponent<PlayerController>().Init(1, 1, 1.5f,1);
+
+        if(playerCount == 2)
+        {
+            if (player2 == null)
+            {
+                player2 = Instantiate(playerPre2);
+            }
+            player2.transform.position = mapController.GetPlayerPos(2);
+            player2.GetComponent<PlayerController>().Init(1, 1, 1.5f,2);
+        }
         levelCount++;
     }
 

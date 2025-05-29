@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 8785553204946710956}
   - component: {fileID: 2278722763986250836}
   - component: {fileID: -1031362876183946450}
-  m_Layer: 0
+  - component: {fileID: -3574300204368109248}
+  - component: {fileID: -7547886810752806965}
+  m_Layer: 7
   m_Name: player_2
   m_TagString: player
   m_Icon: {fileID: 0}
@@ -28,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 2785244656653940999}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.98, y: 2.38, z: 0}
+  m_LocalPosition: {x: -2.868, y: 2.4, z: 0}
   m_LocalScale: {x: 2.1, y: 2.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -142,3 +144,46 @@ CircleCollider2D:
   m_Offset: {x: 0, y: -0.061360028}
   serializedVersion: 2
   m_Radius: 0.17669414
+--- !u!114 &-3574300204368109248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785244656653940999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ef0889e135d73418c4159874b57f41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HP: 0
+  range: 0
+  bombCount: 1
+  bombTime: 0
+--- !u!50 &-7547886810752806965
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785244656653940999}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
