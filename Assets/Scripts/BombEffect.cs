@@ -9,6 +9,6 @@ public class BombEffect : MonoBehaviour
     /// </summary>
     private void aniFin()
     {
-        Destroy(gameObject);
+        ObjectPool.instance.Add(ObjectType.BombEffect, gameObject);
     }
 }

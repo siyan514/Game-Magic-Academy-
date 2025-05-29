@@ -8,7 +8,7 @@ public class wall : MonoBehaviour
     {
         if (collision.CompareTag(Tags.BombEffect))
         {
-            Destroy(gameObject);
+            ObjectPool.instance.Add(ObjectType.Wall, gameObject);
         }
     }
 }

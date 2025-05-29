@@ -4,16 +4,29 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public GameObject bombPre;
+    //public GameObject bombPre;
+
+    public int HP = 0;
+    public int range = 0;
+    public int bombCount = 1;
+    public float bombTime = 0;
+
     private Animator anim;
     private float speed = 0.1f;
     private Rigidbody2D rig;
     private SpriteRenderer spriteRenderer;
     private Color color;
     private bool isInjured = false;
-    private int HP = 0;
-    private int range = 0;
-    private float bombTime = 0;
+    
+    /// <summary>
+    /// Add the moving speed of player.
+    /// </summary>
+    /// <param name="value"></param>
+    public void AddSpeed(float value = 0.25f)
+    {
+        speed += value;
+        if (speed >= 0.15f) speed = 0.15f;
+    }
 
     private void Awake()
     {
@@ -59,12 +72,13 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void CreateBomb()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && bombCount > 0)
         {
-            GameObject bomb = Instantiate(bombPre);
-            bomb.transform.position = new Vector3(Mathf.RoundToInt(transform.position.x),
-                Mathf.RoundToInt(transform.position.y));
-            bomb.GetComponent<BombController>().Init(range, bombTime);
+            bombCount--;
+            GameObject bomb = ObjectPool.instance.Get(ObjectType.Bomb, 
+                new Vector3(Mathf.RoundToInt(transform.position.x),
+                Mathf.RoundToInt(transform.position.y)));
+            bomb.GetComponent<BombController>().Init(range, bombTime, () => bombCount++);
         }
     }
 

@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
-    public GameObject superWallPre, wallPre, propPre;
     private int X, Y;
     private List<Vector2> emptyPointList = new List<Vector2>();
     private List<Vector2> superWallPointList = new List<Vector2>();
+    //The collection of all objects retrieved from the object pool.
+    private Dictionary<ObjectType, List<GameObject>> poolObjectDic = new Dictionary<ObjectType, List<GameObject>>();
 
     /// <summary>
     /// Determine whether the current position is an actual wall
@@ -16,9 +17,12 @@ public class MapController : MonoBehaviour
     /// <returns></returns>
     public bool IsSuperWall(Vector2 pos)
     {
-        if(superWallPointList.Contains(pos)) 
-            return true;
-        return false;
+        
+        //if(superWallPointList.Contains(pos)) 
+        //    return true;
+        //return false;
+        Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
+        return superWallPointList.Contains(intPos);
     }
 
     public Vector2 GetPlayerPos()
@@ -28,6 +32,7 @@ public class MapController : MonoBehaviour
 
     public void initMap(int x, int y, int wallCount)
     {
+        ResetMap();
         Y = y;
         X = x;
         createSuperWall();
@@ -35,6 +40,23 @@ public class MapController : MonoBehaviour
         Debug.Log(emptyPointList.Count);
         CreateWall(wallCount);
         createProps();
+    }
+
+    /// <summary>
+    /// Reset the map.
+    /// </summary>
+    private void ResetMap()
+    {
+        emptyPointList.Clear();
+        superWallPointList.Clear();
+        foreach (var item in poolObjectDic)
+        {
+            foreach (var obj in item.Value)
+            {
+                ObjectPool.instance.Add(item.Key, obj);
+            }
+        }
+        poolObjectDic.Clear();
     }
 
     /// <summary>
@@ -65,9 +87,18 @@ public class MapController : MonoBehaviour
 
     private void spawnSuperWall(Vector2 pos)
     {
-        superWallPointList.Add(pos);
-        GameObject wall = Instantiate(superWallPre, transform);
-        wall.transform.position = pos;
+        Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
+        superWallPointList.Add(intPos);
+
+        GameObject superWall = ObjectPool.instance.Get(ObjectType.SuperWall, pos);
+        if (poolObjectDic.ContainsKey(ObjectType.SuperWall)==false)
+        {
+            poolObjectDic.Add(ObjectType.SuperWall, new List<GameObject>());
+        }
+        else
+        {
+            poolObjectDic[ObjectType.SuperWall].Add(superWall);
+        }
     }
 
     /// <summary>
@@ -109,10 +140,16 @@ public class MapController : MonoBehaviour
         for(int i = 0; i < wallCount; i++)
         {
             int index = Random.Range(0, emptyPointList.Count);
-            GameObject wall = Instantiate(wallPre, transform);
-            wall.transform.position = emptyPointList[index];
-
+            GameObject wall = ObjectPool.instance.Get(ObjectType.Wall, emptyPointList[index]);
             emptyPointList.RemoveAt(index);
+            if (poolObjectDic.ContainsKey(ObjectType.Wall) == false)
+            {
+                poolObjectDic.Add(ObjectType.Wall, new List<GameObject>());
+            }
+            else
+            {
+                poolObjectDic[ObjectType.Wall].Add(wall);
+            }
         }
     }
 
@@ -124,11 +161,17 @@ public class MapController : MonoBehaviour
         int count = Random.Range(0, 2 + (int)(emptyPointList.Count*0.05f));
         for (int i = 0;i < count;i++)
         {
-            GameObject prop = Instantiate(propPre, transform);
             int index = Random.Range(0, emptyPointList.Count);
-            prop.transform.position = emptyPointList[index];
-
+            GameObject prop = ObjectPool.instance.Get(ObjectType.Prop, emptyPointList[index]);
             emptyPointList.RemoveAt(index);
+            if (poolObjectDic.ContainsKey(ObjectType.Prop) == false)
+            {
+                poolObjectDic.Add(ObjectType.Prop, new List<GameObject>());
+            }
+            else
+            {
+                poolObjectDic[ObjectType.Prop].Add(prop);
+            }
         }
     }
 }
