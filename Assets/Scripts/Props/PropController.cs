@@ -44,7 +44,7 @@ public class PropController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag(Tags.BombEffect))
+        if (collision.CompareTag(Tags.BombEffect) && gameObject.CompareTag("Wall"))
         {
             tag = "Untagged";
             gameObject.layer = 0;
@@ -58,28 +58,56 @@ public class PropController : MonoBehaviour
         //Contact the player and enhance the effect based on the type of the item.
         if (collision.CompareTag(Tags.Player))
         {
-            PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
+            // PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
+            PlayerBase player = collision.gameObject.GetComponent<PlayerBase>();
 
-            switch (propType) 
+            //switch (propType) 
+            //{
+            //    case PropType.HealthPoint:
+            //        playerController.HP++;
+            //        break;
+            //    case PropType.Bomb:
+            //        playerController.bombCount++;
+            //        break; 
+            //    case PropType.BombRange:
+            //        playerController.range++;
+            //        break; 
+            //    case PropType.defence:
+            //        playerController.ActivateInvincibility(8f); // Activate 8-second invincibility
+            //        break;
+            //    case PropType.speed:
+            //        playerController.AddSpeed();
+            //        break;
+            //    default: 
+            //        break;
+            //}
+
+            switch (propType)
             {
                 case PropType.HealthPoint:
-                    playerController.HP++;
+                    player.AddHealth();
+                    Debug.Log($"玩家 {player.PlayerIndex} 获得生命值");
                     break;
                 case PropType.Bomb:
-                    playerController.bombCount++;
-                    break; 
+                    player.AddBomb();
+                    Debug.Log($"玩家 {player.PlayerIndex} 获得炸弹");
+                    break;
                 case PropType.BombRange:
-                    playerController.range++;
-                    break; 
+                    player.AddRange();
+                    Debug.Log($"玩家 {player.PlayerIndex} 炸弹范围增加");
+                    break;
                 case PropType.defence:
-                    playerController.ActivateInvincibility(8f); // Activate 8-second invincibility
+                    player.ActivateInvincibility(8f);
+                    Debug.Log($"玩家 {player.PlayerIndex} 获得无敌");
                     break;
                 case PropType.speed:
-                    playerController.AddSpeed();
+                    player.AddSpeed();
+                    Debug.Log($"玩家 {player.PlayerIndex} 获得加速");
                     break;
-                default: 
+                default:
                     break;
             }
+
             ResetProp();
             ObjectPool.instance.Add(ObjectType.Prop, gameObject);
         }
