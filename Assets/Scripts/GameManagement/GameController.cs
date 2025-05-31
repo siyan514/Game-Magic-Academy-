@@ -6,8 +6,12 @@ public class GameController : MonoBehaviour
 {
     public static GameController instance;
     public static int playerCount = 2;
+    public static int AICount = 2;
+
     public GameObject playerPre1;
     public GameObject playerPre2;
+    public GameObject AIPlayerPre1;
+    public GameObject AIPlayerPre2;
     private MapController mapController;
     private int levelCount = 0;
     private PlayerManagement playerManager;
@@ -23,6 +27,8 @@ public class GameController : MonoBehaviour
         playerManager = gameObject.AddComponent<PlayerManagement>();
         playerManager.playerPre1 = playerPre1;
         playerManager.playerPre2 = playerPre2;
+        playerManager.AIPlayerPre1 = AIPlayerPre1;
+        playerManager.AIPlayerPre2 = AIPlayerPre2;
         LevelCtrl();
     }
 
@@ -36,15 +42,19 @@ public class GameController : MonoBehaviour
 
     private void LevelCtrl()
     {
-        int x = 7 + 1 * (levelCount / 4);
-        int y = 5 + 1 * (levelCount / 4);
-        if (x >= 8) x = 8;
-        if (y >= 8) y = 8;
+        if (playerManager != null)
+            playerManager.DestroyAllPlayers();
+
+        int x = 7;
+        int y = 6;
 
         mapController.initMap(x, y, x * y);
         playerManager.CreatePlayers(mapController);
+        playerManager.CreateAIPlayer(mapController);
         levelCount++;
     }
+
+
 
     public bool IsSuperWall(Vector2 pos)
     {

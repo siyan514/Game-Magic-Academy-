@@ -22,14 +22,18 @@ public class HumanPlayer : PlayerBase
     {
         if (!IsActive) return;
 
-        // 处理移动输入
+        // Handle movement input
         Vector2 moveInput = inputHandler.GetMovementInput();
+
+        anim.SetFloat("Horizontal", moveInput.x);
+        anim.SetFloat("Vertical", moveInput.y);
+
         if (moveInput != Vector2.zero)
         {
             Move(moveInput);
         }
 
-        // 处理炸弹放置
+        // Handle bomb placement
         if (inputHandler.GetBombInput())
         {
             PlaceBomb();
@@ -38,11 +42,7 @@ public class HumanPlayer : PlayerBase
 
     public override void Move(Vector2 direction)
     {
-        // 更新动画
-        anim.SetFloat("Horizontal", direction.x);
-        anim.SetFloat("Vertical", direction.y);
-
-        // 应用移动
+        // Apply movement
         rig.MovePosition(rig.position + direction * speed);
     }
 
@@ -69,35 +69,28 @@ public class HumanPlayer : PlayerBase
 
         if (HP <= 0)
         {
-
-            Die(); // 调用死亡方法
+            Die(); // Call death method
         }
         else
         {
-            // 僵直1秒
+            // Stun for 1 second
             StartCoroutine(DisableControlRoutine(1f));
-            // 激活3秒灰色无敌效果
+            // Activate 3-second gray invincibility effect
             ActivateInvincibility(3f, false);
         }
     }
 
     protected override IEnumerator DisappearAfterDelay(float delay)
     {
-        // 播放死亡音效
+        // Play death sound
         // AudioManager.Play("PlayerDeath");
-        
-        // 执行渐隐效果
+
+        // Execute fade-out effect
         yield return base.DisappearAfterDelay(delay);
 
-        // 可以在这里触发游戏结束事件等
+        // Trigger game over event here if needed
         // GameManager.Instance.PlayerDied(PlayerIndex);
     }
-
-    // public override void ActivateInvincibility(float duration)
-    // {
-    //     IsInvincible = true;
-    //     StartCoroutine(InvincibilityEffect(duration));
-    // }
 
     private void OnTriggerEnter2D(Collider2D collider)
     {

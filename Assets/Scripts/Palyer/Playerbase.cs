@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class PlayerBase : MonoBehaviour
 {
-    // 玩家核心属性
+    // Player core attributes
     public int HP { get; protected set; }
     public int BombCount { get; protected set; }
     public int Range { get; protected set; }
@@ -13,13 +13,13 @@ public abstract class PlayerBase : MonoBehaviour
     public bool IsInvincible { get; protected set; }
     public bool IsActive { get; protected set; } = true;
 
-    // 组件引用
+    // Component references
     protected Animator anim;
     protected Rigidbody2D rig;
     protected SpriteRenderer spriteRenderer;
     protected Color originalColor;
 
-    // 移动速度
+    // Movement speed
     protected float speed = 0.1f;
 
     protected Coroutine currentInvincibilityCoroutine;
@@ -47,19 +47,19 @@ public abstract class PlayerBase : MonoBehaviour
     public abstract void TakeDamage();
     public virtual void ActivateInvincibility(float duration, bool isRainbowEffect = true)
     {
-        // 停止现有的无敌效果
+        // Stop existing invincibility effect
         if (currentInvincibilityCoroutine != null)
         {
             StopCoroutine(currentInvincibilityCoroutine);
         }
 
-        // 恢复原始颜色
+        // Restore original color
         if (spriteRenderer != null)
             spriteRenderer.color = originalColor;
 
         IsInvincible = true;
 
-        // 根据参数启动不同类型无敌效果
+        // Start different invincibility effects based on parameter
         if (isRainbowEffect)
         {
             currentInvincibilityCoroutine = StartCoroutine(InvincibilityEffect(duration));
@@ -70,7 +70,7 @@ public abstract class PlayerBase : MonoBehaviour
         }
     }
 
-    // 玩家能力增强方法
+    // Player power-up methods
     public virtual void AddSpeed(float value = 0.25f)
     {
         speed += value;
@@ -97,7 +97,7 @@ public abstract class PlayerBase : MonoBehaviour
         if (BombCount > 0) BombCount--;
     }
 
-    // 受伤效果协程
+    // Damage effect coroutine
     protected IEnumerator InjuredEffect(float duration)
     {
         float timer = 0f;
@@ -105,7 +105,7 @@ public abstract class PlayerBase : MonoBehaviour
         {
             if (spriteRenderer != null)
             {
-                // 半透明效果
+                // Semi-transparent effect
                 Color tempColor = originalColor;
                 tempColor.a = 0.2f;
                 spriteRenderer.color = tempColor;
@@ -124,7 +124,7 @@ public abstract class PlayerBase : MonoBehaviour
             spriteRenderer.color = originalColor;
     }
 
-    // 彩虹特效仅用于无敌状态
+    // Rainbow effect only for invincibility state
     protected IEnumerator InvincibilityEffect(float duration)
     {
         float startTime = Time.time;
@@ -154,23 +154,23 @@ public abstract class PlayerBase : MonoBehaviour
         if (spriteRenderer != null)
             spriteRenderer.color = originalColor;
 
-        // 新增：无敌状态结束
+        // Invincibility state ends
         IsInvincible = false;
         currentInvincibilityCoroutine = null;
     }
 
-    // 新增：灰色无敌协程
+    // Gray invincibility coroutine
     protected IEnumerator TemporaryInvincibilityRoutine(float duration)
     {
-        // 启动灰色闪烁效果
+        // Start gray flashing effect
         yield return StartCoroutine(InjuredEffect(duration));
 
-        // 无敌状态结束
+        // Invincibility state ends
         IsInvincible = false;
         currentInvincibilityCoroutine = null;
     }
 
-    // 禁用控制协程
+    // Disable control coroutine
     protected IEnumerator DisableControlRoutine(float duration)
     {
         IsActive = false;
@@ -180,31 +180,31 @@ public abstract class PlayerBase : MonoBehaviour
 
     public virtual void Die()
     {
-        // 停止所有协程
+        // Stop all coroutines
         StopAllCoroutines();
 
-        // 设置状态
+        // Set state
         IsActive = false;
-        IsInvincible = true; // 防止任何后续伤害
+        IsInvincible = true; // Prevent any further damage
 
-        // 禁用碰撞体
+        // Disable collider
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null) collider.enabled = false;
 
-        // 禁用刚体
+        // Disable rigidbody physics
         if (rig != null) rig.simulated = false;
 
-        // 播放死亡动画（如果有）
-        if (anim != null) anim.SetTrigger("Die");
+        // Play death animation (if exists)
+        // if (anim != null) anim.SetTrigger("Die");
 
-        // 从屏幕上消失（禁用或销毁）
+        // Disappear from screen
         StartCoroutine(DisappearAfterDelay(0.5f));
     }
 
-    // 新增：延迟消失协程
+    // Delayed disappearance coroutine
     protected virtual IEnumerator DisappearAfterDelay(float delay)
     {
-        // 可选：添加消失效果（如渐隐）
+        // Optional: Add disappearance effect (like fade-out)
         float timer = 0f;
         while (timer < delay)
         {
@@ -218,7 +218,7 @@ public abstract class PlayerBase : MonoBehaviour
             yield return null;
         }
 
-        // 最终销毁对象
+        // Finally destroy the object
         Destroy(gameObject);
     }
 }

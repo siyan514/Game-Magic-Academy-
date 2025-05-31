@@ -17,7 +17,7 @@ public class MapController : MonoBehaviour
     /// <returns></returns>
     public bool IsSuperWall(Vector2 pos)
     {
-        
+
         //if(superWallPointList.Contains(pos)) 
         //    return true;
         //return false;
@@ -34,8 +34,10 @@ public class MapController : MonoBehaviour
     public Vector2 GetPlayerPos(int playerIndex)
     {
         if (playerIndex == 1) return new Vector2(-(X + 1), Y - 1);
-        if (playerIndex == 2) return new Vector2(X - 1, -Y-1);
-        return new Vector2(1,1);
+        if (playerIndex == 2) return new Vector2(X - 1, -Y - 1);
+        if (playerIndex == 3) return new Vector2(X-1, -Y);
+        if (playerIndex == 4) return new Vector2(X - 2, -Y - 1);
+        return new Vector2(1, 1);
     }
 
     public void initMap(int x, int y, int wallCount)
@@ -75,7 +77,7 @@ public class MapController : MonoBehaviour
         {
             for (int y = -Y; y < Y; y += 2)
             {
-                spawnSuperWall(new Vector2(x,y));
+                spawnSuperWall(new Vector2(x, y));
             }
         }
 
@@ -85,7 +87,7 @@ public class MapController : MonoBehaviour
             spawnSuperWall(new Vector2(x, -Y - 2));
         }
 
-        for (int y = -(Y + 1); y <= Y-1; y++)
+        for (int y = -(Y + 1); y <= Y - 1; y++)
         {
             spawnSuperWall(new Vector2(-(X + 2), y));
             spawnSuperWall(new Vector2(X, y));
@@ -98,7 +100,7 @@ public class MapController : MonoBehaviour
         superWallPointList.Add(intPos);
 
         GameObject superWall = ObjectPool.instance.Get(ObjectType.SuperWall, pos);
-        if (poolObjectDic.ContainsKey(ObjectType.SuperWall)==false)
+        if (poolObjectDic.ContainsKey(ObjectType.SuperWall) == false)
         {
             poolObjectDic.Add(ObjectType.SuperWall, new List<GameObject>());
         }
@@ -113,9 +115,9 @@ public class MapController : MonoBehaviour
     /// </summary>
     private void findEmptyPoint()
     {
-        for(int x =  -(X + 1); x <= X - 1; x++)
+        for (int x = -(X + 1); x <= X - 1; x++)
         {
-            if(-(X + 1) % 2 == x % 2)
+            if (-(X + 1) % 2 == x % 2)
             {
                 for (int y = -(Y + 1); y <= Y - 1; y++)
                 {
@@ -143,11 +145,11 @@ public class MapController : MonoBehaviour
     /// </summary>
     private void CreateWall(int wallCount)
     {
-        if(wallCount >= emptyPointList.Count)
+        if (wallCount >= emptyPointList.Count)
         {
-            wallCount = (int)(emptyPointList.Count*0.7f);
+            wallCount = (int)(emptyPointList.Count * 0.7f);
         }
-        for(int i = 0; i < wallCount; i++)
+        for (int i = 0; i < wallCount; i++)
         {
             int index = Random.Range(0, emptyPointList.Count);
             GameObject wall = ObjectPool.instance.Get(ObjectType.Wall, emptyPointList[index]);
@@ -168,8 +170,8 @@ public class MapController : MonoBehaviour
     /// </summary>
     private void createProps()
     {
-        int count = Random.Range(5, 10 + (int)(emptyPointList.Count*0.05f));
-        for (int i = 0;i < count;i++)
+        int count = Random.Range(5, 10 + (int)(emptyPointList.Count * 0.05f));
+        for (int i = 0; i < count; i++)
         {
             int index = Random.Range(0, emptyPointList.Count);
             GameObject prop = ObjectPool.instance.Get(ObjectType.Prop, emptyPointList[index]);
