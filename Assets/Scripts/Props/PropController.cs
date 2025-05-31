@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum PropType
@@ -7,120 +6,240 @@ public enum PropType
     HealthPoint,
     Bomb,
     BombRange,
-    defence,
-    speed
+    Defence,  // Corrected casing
+    Speed     // Corrected casing
 }
 
 [System.Serializable]
-public class PropType_Sprite
+public class PropTypePrefab
 {
     public PropType type;
-    public Sprite sp;
+    public GameObject propPrefab;
+    public string animationName;  // Add animation name field
 }
 
 public class PropController : MonoBehaviour
 {
-    public PropType_Sprite[] propType_Sprites;
-    private Sprite defultSp;
-    private SpriteRenderer spriteRenderer;
+    [Header("Prop Configuration")]
+    public PropTypePrefab[] propTypePrefabs;
+
+    private GameObject activeProp;
     private PropType propType;
+    private SpriteRenderer wallRenderer;
+    private Collider2D wallCollider;
 
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        defultSp = spriteRenderer.sprite;
+        wallRenderer = GetComponent<SpriteRenderer>();
+        wallCollider = GetComponent<Collider2D>();
     }
 
     /// <summary>
-    /// Reset all the prop
+    /// Reset the prop to its initial wall state
     /// </summary>
     private void ResetProp()
     {
         tag = "Wall";
-        gameObject.layer = 6;
-        GetComponent<Collider2D>().isTrigger = false;
-        spriteRenderer.sprite = defultSp;
+        gameObject.layer = LayerMask.NameToLayer("wall");
+        wallCollider.isTrigger = false;
+        wallCollider.enabled = true;
+
+        if (wallRenderer != null)
+        {
+            wallRenderer.enabled = true;
+        }
+
+        if (activeProp != null)
+        {
+            Destroy(activeProp);
+            activeProp = null;
+        }
     }
 
+    /// <summary>
+    /// Handle trigger enter events for bomb effects
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(Tags.BombEffect) && gameObject.CompareTag("Wall"))
         {
-            tag = "Untagged";
-            gameObject.layer = 0;
-            GetComponent<Collider2D>().isTrigger = true;
-            int index = Random.Range(0, propType_Sprites.Length);
-            spriteRenderer.sprite = propType_Sprites[index].sp;
-            propType = propType_Sprites[index].type;
-
-            StartCoroutine(PropAni());
-        }
-        //Contact the player and enhance the effect based on the type of the item.
-        if (collision.CompareTag(Tags.Player))
-        {
-            // PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
-            PlayerBase player = collision.gameObject.GetComponent<PlayerBase>();
-
-            //switch (propType) 
-            //{
-            //    case PropType.HealthPoint:
-            //        playerController.HP++;
-            //        break;
-            //    case PropType.Bomb:
-            //        playerController.bombCount++;
-            //        break; 
-            //    case PropType.BombRange:
-            //        playerController.range++;
-            //        break; 
-            //    case PropType.defence:
-            //        playerController.ActivateInvincibility(8f); // Activate 8-second invincibility
-            //        break;
-            //    case PropType.speed:
-            //        playerController.AddSpeed();
-            //        break;
-            //    default: 
-            //        break;
-            //}
-
-            switch (propType)
-            {
-                case PropType.HealthPoint:
-                    player.AddHealth();
-                    Debug.Log($"玩家 {player.PlayerIndex} 获得生命值");
-                    break;
-                case PropType.Bomb:
-                    player.AddBomb();
-                    Debug.Log($"玩家 {player.PlayerIndex} 获得炸弹");
-                    break;
-                case PropType.BombRange:
-                    player.AddRange();
-                    Debug.Log($"玩家 {player.PlayerIndex} 炸弹范围增加");
-                    break;
-                case PropType.defence:
-                    player.ActivateInvincibility(8f);
-                    Debug.Log($"玩家 {player.PlayerIndex} 获得无敌");
-                    break;
-                case PropType.speed:
-                    player.AddSpeed();
-                    Debug.Log($"玩家 {player.PlayerIndex} 获得加速");
-                    break;
-                default:
-                    break;
-            }
-
-            ResetProp();
-            ObjectPool.instance.Add(ObjectType.Prop, gameObject);
+            ActivateProp();
         }
     }
 
-    IEnumerator PropAni()
+    /// <summary>
+    /// Activate a random prop when the wall is destroyed
+    /// </summary>
+    private void ActivateProp()
     {
-        for (int i = 0; i < 2; i++)
+        // Disable wall properties
+        tag = "Untagged";
+        gameObject.layer = 0; // Default layer
+        wallCollider.isTrigger = true;
+
+        if (wallRenderer != null)
         {
-            spriteRenderer.color = Color.yellow;
-            yield return new WaitForSeconds(0.25f);
-            spriteRenderer.color = Color.white;
-            yield return new WaitForSeconds(0.25f);
+            wallRenderer.enabled = false;
         }
+
+        // Select a random prop type
+        if (propTypePrefabs == null || propTypePrefabs.Length == 0)
+        {
+            Debug.LogError("No prop prefabs configured!");
+            return;
+        }
+
+        int index = Random.Range(0, propTypePrefabs.Length);
+        propType = propTypePrefabs[index].type;
+
+        // Instantiate the prop
+        activeProp = Instantiate(
+            propTypePrefabs[index].propPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+
+        if (activeProp == null)
+        {
+            Debug.LogError("Failed to instantiate prop prefab");
+            return;
+        }
+
+        activeProp.transform.SetParent(transform);
+        activeProp.transform.localPosition = Vector3.zero;
+
+        // Add and initialize collider handler
+        PropColliderHandler propCollider = activeProp.GetComponent<PropColliderHandler>();
+        if (propCollider == null)
+        {
+            propCollider = activeProp.AddComponent<PropColliderHandler>();
+        }
+        propCollider.Initialize(this);
+
+        // Play prop animation safely
+        PlayPropAnimation(activeProp, propTypePrefabs[index].animationName);
+    }
+
+    /// <summary>
+    /// Safely play prop animation with fallback options
+    /// </summary>
+    private void PlayPropAnimation(GameObject prop, string animationName)
+    {
+        if (prop == null) return;
+
+        // Try Animator system first
+        Animator animator = prop.GetComponent<Animator>();
+        if (animator != null)
+        {
+            // Check if animator controller is assigned
+            if (animator.runtimeAnimatorController == null)
+            {
+                Debug.LogWarning("Animator controller missing on prop: " + prop.name);
+                return;
+            }
+
+            // Try playing by animation name
+            if (!string.IsNullOrEmpty(animationName))
+            {
+                animator.Play(animationName, 0, 0f);
+                return;
+            }
+
+            // Fallback to first animation state
+            if (animator.runtimeAnimatorController.animationClips.Length > 0)
+            {
+                string fallbackClip = animator.runtimeAnimatorController.animationClips[0].name;
+                animator.Play(fallbackClip, 0, 0f);
+                Debug.LogWarning("Using fallback animation: " + fallbackClip);
+            }
+            return;
+        }
+
+        // Fallback to legacy Animation system
+        Animation legacyAnim = prop.GetComponent<Animation>();
+        if (legacyAnim != null)
+        {
+            // Try playing by animation name
+            if (!string.IsNullOrEmpty(animationName))
+            {
+                legacyAnim.Play(animationName);
+                return;
+            }
+
+            // Fallback to first animation clip
+            if (legacyAnim.clip != null)
+            {
+                legacyAnim.Play();
+            }
+            return;
+        }
+
+        // If no animation components, use simple visual effect
+        StartCoroutine(PlayPulseEffect(prop));
+    }
+
+    /// <summary>
+    /// Fallback visual effect when no animation is available
+    /// </summary>
+    private IEnumerator PlayPulseEffect(GameObject prop)
+    {
+        Vector3 originalScale = prop.transform.localScale;
+        float duration = 1.5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float scaleFactor = Mathf.PingPong(elapsed * 2f, 0.2f) + 0.9f;
+            prop.transform.localScale = originalScale * scaleFactor;
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        prop.transform.localScale = originalScale;
+    }
+
+    /// <summary>
+    /// Handle prop pickup by a player
+    /// </summary>
+    public void OnPropPicked(PlayerBase player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Prop picked by null player reference");
+            return;
+        }
+
+        // Apply prop effect based on type
+        switch (propType)
+        {
+            case PropType.HealthPoint:
+                player.AddHealth();
+                Debug.Log($"Player {player.PlayerIndex} gained health");
+                break;
+            case PropType.Bomb:
+                player.AddBomb();
+                Debug.Log($"Player {player.PlayerIndex} gained bomb");
+                break;
+            case PropType.BombRange:
+                player.AddRange();
+                Debug.Log($"Player {player.PlayerIndex} increased bomb range");
+                break;
+            case PropType.Defence:
+                player.ActivateInvincibility(8f);
+                Debug.Log($"Player {player.PlayerIndex} activated invincibility");
+                break;
+            case PropType.Speed:
+                player.AddSpeed();
+                Debug.Log($"Player {player.PlayerIndex} increased speed");
+                break;
+            default:
+                Debug.LogWarning($"Unhandled prop type: {propType}");
+                break;
+        }
+
+        // Clean up and reset
+        ResetProp();
+        ObjectPool.instance.Add(ObjectType.Prop, gameObject);
     }
 }

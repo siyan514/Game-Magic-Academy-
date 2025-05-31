@@ -143,12 +143,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88b27aaaa163c7948bfba176f229b18d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  propType_Sprites:
+  propTypePrefabs:
   - type: 0
-    sp: {fileID: 21300000, guid: 1d2e4ac53ac291049b3001895dab972a, type: 3}
+    propPrefab: {fileID: 8286128265729637570, guid: e933f6128d6d4734f9e3c3ee5ce3c00a, type: 3}
+    animationName: health point
   - type: 1
-    sp: {fileID: 21300000, guid: 934a91e77cc8494498497ca2db3e9ed3, type: 3}
+    propPrefab: {fileID: 4068347405972355635, guid: fb09133f041718449b629ef39ac46f6b, type: 3}
+    animationName: potion bomb
   - type: 2
-    sp: {fileID: 21300000, guid: b4415b8e97c97274eb53ea7d2698c497, type: 3}
+    propPrefab: {fileID: 8036844135663005220, guid: d308d57595fa796488d0a92f969972aa, type: 3}
+    animationName: attack range
   - type: 3
-    sp: {fileID: 21300000, guid: c76373186f94f434b99a75cda0b91c7c, type: 3}
+    propPrefab: {fileID: 3611241191455469341, guid: 51a3872e5bd49a8418da8488f40557e9, type: 3}
+    animationName: defence
+  - type: 4
+    propPrefab: {fileID: 859238318605988371, guid: dd30a89c3acc9cf42b2cefa0d189d413, type: 3}
+    animationName: speed up

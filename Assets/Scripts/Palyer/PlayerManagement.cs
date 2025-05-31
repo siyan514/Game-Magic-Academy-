@@ -20,7 +20,7 @@ public class PlayerManagement : MonoBehaviour
         GameObject player1Obj = Instantiate(playerPre1);
         player1Obj.transform.position = mapController.GetPlayerPos(1);
         PlayerBase player1 = player1Obj.GetComponent<PlayerBase>();
-        player1.Init(1, 1, 1.5f, 1);
+        player1.Init(1, 2, 1.5f, 1);
         players.Add(player1);
 
         // 创建玩家2（如果是双人模式）
