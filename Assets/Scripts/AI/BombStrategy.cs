@@ -1,24 +1,11 @@
-// public abstract class BombStrategy
-// {
-//     public abstract bool ShouldPlaceBomb(AIPlayer player, PathFinding pathFinding);
-// }
+using UnityEngine;
 
-// // 保守策略：只在安全时放炸弹
-// public class DefensiveBombStrategy : BombStrategy
-// {
-//     public override bool ShouldPlaceBomb(AIPlayer player, PathFinding pathFinding)
-//     {
-//         return player.BombCount > 0 &&
-//                pathFinding.HasSafeEscape();
-//     }
-// }
-
-// // 激进策略：主动攻击
-// public class AggressiveBombStrategy : BombStrategy
-// {
-//     public override bool ShouldPlaceBomb(AIPlayer player, PathFinding pathFinding)
-//     {
-//         return player.BombCount > 0 &&
-//                PlayerInRange(player);
-//     }
-// }
+public class BombStrategy
+{
+    public bool ShouldPlaceBomb(Vector2 playerPos, Vector2 myPos)
+    {
+        // 简单策略：当玩家在2个单位距离内且当前位置安全时放置炸弹
+        float distance = Vector2.Distance(playerPos, myPos);
+        return distance < 2f;
+    }
+}

@@ -7,7 +7,7 @@ public class MapController : MonoBehaviour
     private int X, Y;
     private List<Vector2> emptyPointList = new List<Vector2>();
     private List<Vector2> superWallPointList = new List<Vector2>();
-    //The collection of all objects retrieved from the object pool.
+    public List<Vector2> accessiblePointList = new List<Vector2>();
     private Dictionary<ObjectType, List<GameObject>> poolObjectDic = new Dictionary<ObjectType, List<GameObject>>();
 
     /// <summary>
@@ -17,10 +17,6 @@ public class MapController : MonoBehaviour
     /// <returns></returns>
     public bool IsSuperWall(Vector2 pos)
     {
-
-        //if(superWallPointList.Contains(pos)) 
-        //    return true;
-        //return false;
         Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
         return superWallPointList.Contains(intPos);
     }
@@ -35,8 +31,8 @@ public class MapController : MonoBehaviour
     {
         if (playerIndex == 1) return new Vector2(-(X + 1), Y - 1);
         if (playerIndex == 2) return new Vector2(X - 1, -Y - 1);
-        if (playerIndex == 3) return new Vector2(X-1, -Y);
-        if (playerIndex == 4) return new Vector2(X - 2, -Y - 1);
+        if (playerIndex == 3) return new Vector2(X - 1, Y - 1);
+        if (playerIndex == 4) return new Vector2(-X - 1, -Y - 1);
         return new Vector2(1, 1);
     }
 
@@ -122,6 +118,7 @@ public class MapController : MonoBehaviour
                 for (int y = -(Y + 1); y <= Y - 1; y++)
                 {
                     emptyPointList.Add(new Vector2(x, y));
+                    accessiblePointList.Add(new Vector2(x, y));
                 }
             }
             else
@@ -129,15 +126,25 @@ public class MapController : MonoBehaviour
                 for (int y = -(Y + 1); y <= Y - 1; y += 2)
                 {
                     emptyPointList.Add(new Vector2(x, y));
+                    accessiblePointList.Add(new Vector2(x, y));
                 }
             }
         }
         emptyPointList.Remove(new Vector2(-(X + 1), Y - 1));
         emptyPointList.Remove(new Vector2(-(X + 1), Y - 2));
         emptyPointList.Remove(new Vector2(-X, Y - 1));
+
         emptyPointList.Remove(new Vector2(X - 2, -Y - 1));
         emptyPointList.Remove(new Vector2(X - 1, -Y - 1));
         emptyPointList.Remove(new Vector2(X - 1, -Y));
+
+        emptyPointList.Remove(new Vector2(X - 1, Y - 1));
+        emptyPointList.Remove(new Vector2(X - 1, Y - 2));
+        emptyPointList.Remove(new Vector2(X - 2, Y - 1));
+
+        emptyPointList.Remove(new Vector2(-X - 1, -Y - 1));
+        emptyPointList.Remove(new Vector2(-X - 1, -Y));
+        emptyPointList.Remove(new Vector2(-X, -Y - 1));
     }
 
     /// <summary>

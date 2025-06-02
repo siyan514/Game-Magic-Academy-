@@ -82,14 +82,8 @@ public class HumanPlayer : PlayerBase
 
     protected override IEnumerator DisappearAfterDelay(float delay)
     {
-        // Play death sound
-        // AudioManager.Play("PlayerDeath");
-
-        // Execute fade-out effect
         yield return base.DisappearAfterDelay(delay);
 
-        // Trigger game over event here if needed
-        // GameManager.Instance.PlayerDied(PlayerIndex);
     }
 
     private void OnTriggerEnter2D(Collider2D collider)

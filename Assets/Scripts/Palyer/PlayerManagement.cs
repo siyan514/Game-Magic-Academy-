@@ -9,13 +9,16 @@ public class PlayerManagement : MonoBehaviour
     public GameObject playerPre2;
     public GameObject AIPlayerPre1;
     public GameObject AIPlayerPre2;
+    public List<Vector2> accessiblePoints;
 
-    private List<PlayerBase> players = new List<PlayerBase>();
+
+    public List<PlayerBase> players = new List<PlayerBase>();
 
     private void Awake()
     {
         instance = this;
     }
+
 
     public void CreatePlayers(MapController mapController)
     {
@@ -38,7 +41,7 @@ public class PlayerManagement : MonoBehaviour
     }
 
     // PlayerManagement.cs
-    public void CreateAIPlayer(MapController mapController)
+    public void CreateAIPlayer(MapController mapController, List<Vector2> accessiblePoints)
     {
         if (AIPlayerPre1 != null)
         {
@@ -46,14 +49,21 @@ public class PlayerManagement : MonoBehaviour
             aiObj1.transform.position = mapController.GetPlayerPos(3);
             PlayerBase aiPlayer1 = aiObj1.GetComponent<PlayerBase>();
             aiPlayer1.Init(1, 1, 1.5f, 3);
+
+            AIController aiController1 = aiObj1.GetComponent<AIController>();
+            if (aiController1 != null)
+            {
+                // aiController1.SetAccessiblePoints(accessiblePoints);
+            }
+
             players.Add(aiPlayer1);
-            Debug.Log("Created AI Player 3");
+            print("Created AI Player 3");
         }
         else
         {
             Debug.LogError("AIPlayerPre1 is not assigned!");
         }
-        
+
         if (GameController.AICount == 2)
         {
             if (AIPlayerPre2 != null)
@@ -62,8 +72,15 @@ public class PlayerManagement : MonoBehaviour
                 aiObj2.transform.position = mapController.GetPlayerPos(4);
                 PlayerBase aiPlayer2 = aiObj2.GetComponent<PlayerBase>();
                 aiPlayer2.Init(1, 1, 1.5f, 4);
+
+                AIController aiController2 = aiObj2.GetComponent<AIController>();
+                if (aiController2 != null)
+                {
+                    // aiController2.SetAccessiblePoints(accessiblePoints);
+                }
+
                 players.Add(aiPlayer2);
-                Debug.Log("Created AI Player 4");
+                print("Created AI Player 4");
             }
             else
             {
@@ -85,5 +102,26 @@ public class PlayerManagement : MonoBehaviour
     public PlayerBase GetPlayer(int index)
     {
         return players.Find(p => p.PlayerIndex == index);
+    }
+
+    public PlayerBase GetNearestPlayer(Vector2 position)
+    {
+        // PlayerBase nearest = null;
+        // float minDistance = float.MaxValue;
+
+        // foreach (var player in players)
+        // {
+        //     if (player == null || !player.IsActive) continue;
+
+        //     float distance = Vector2.Distance(position, player.transform.position);
+        //     if (distance < minDistance)
+        //     {
+        //         minDistance = distance;
+        //         nearest = player;
+        //     }
+        // }
+        // return nearest;
+
+        return GetPlayer(1);
     }
 }

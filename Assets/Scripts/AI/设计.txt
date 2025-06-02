@@ -1,0 +1,138 @@
+AIPlayer类:
+继承PlayerBase
+Move()
+PlaceBomb()
+TakeDamage()
+OnTriggerEnter2D(Collider2D collider) 被炸到就TakeDamage
+
+AICotroller类:
+currentPath列表
+默认追逐update interval是5s
+初始化{aiplayer对象, pathfinding对象, bombstrategy对象}
+
+chase state:
+private void EnterChase()
+    {
+        // UpdateChase();
+        FindNearestPlayer();
+    }
+
+    private void UpdateChase()
+    {
+        pathSmoothTimer += Time.deltaTime;
+        if (pathSmoothTimer >= PATH_SMOOTH_INTERVAL)
+        {
+            FindNearestPlayer();
+            pathSmoothTimer = 0f;
+        }
+
+        // // 每5秒更新一次追逐目标
+        // chaseTimer -= Time.deltaTime;
+        // if (chaseTimer <= 0)
+        // {
+        //     FindNearestPlayer();
+        //     chaseTimer = CHASE_UPDATE_INTERVAL;
+        // }
+
+        FollowPath();
+
+        // 检查是否应该放置炸弹
+        // PlayerBase target = PlayerManagement.instance.GetNearestPlayer(aiPlayer.transform.position);
+        // if (target != null && bombStrategy.ShouldPlaceBomb(target.transform.position, aiPlayer.transform.position))
+        // {
+        //     // aiPlayer.ExecutePlaceBomb();
+        //     // ChangeState(StateType.Escape);
+        // }
+    }
+
+    private void ExitChase()
+    {
+        ClearPath();
+    }
+
+    private void FindNearestPlayer()
+    {
+        // 添加详细的空引用检查
+        if (PlayerManagement.instance == null)
+        {
+            Debug.LogError("PlayerManagement instance is missing!");
+            return;
+        }
+
+        if (aiPlayer == null || aiPlayer.transform == null)
+        {
+            Debug.LogError("AI Player reference is missing!");
+            return;
+        }
+
+        PlayerBase target = PlayerManagement.instance.GetNearestPlayer(aiPlayer.transform.position);
+        if (target == null)
+        {
+            Debug.LogWarning("No active players found for chasing");
+            return;
+        }
+        if (target != null)
+        {
+            // 计算与目标的距离
+            float distance = Vector2.Distance(
+                aiPlayer.transform.position,
+                target.transform.position
+            );
+
+            // 设置超大阈值（1000，远大于地图尺寸）
+            float maxChaseDistance = 1000f;
+
+            if (distance <= maxChaseDistance)
+            {
+                // 只有当目标位置变化较大时才更新路径
+                if (distance <= maxChaseDistance)
+                {
+                    // 只有当目标位置变化较大时才更新路径
+                    if (!fixedTargetPos.HasValue ||
+                        Vector2.Distance(fixedTargetPos.Value, target.transform.position) > 1.0f)
+                    {
+                        fixedTargetPos = target.transform.position;
+
+                        var path = pathFinding.FindPathToPlayer(
+                            aiPlayer.transform.position,
+                            fixedTargetPos.Value
+                        );
+
+                        if (path.Count > 0)
+                        {
+                            // 平滑路径切换：保留当前路径点
+                            if (currentPath != null && currentPathIndex < currentPath.Count)
+                            {
+                                // 如果新路径包含当前目标点，保留当前位置索引
+                                int existingIndex = path.IndexOf(currentPath[currentPathIndex]);
+                                if (existingIndex >= 0)
+                                {
+                                    currentPath = path;
+                                    currentPathIndex = existingIndex;
+                                    return;
+                                }
+                            }
+
+                            // 否则设置新路径
+                            SetPath(path);
+
+                            // 立即更新移动方向
+                            if (currentPath.Count > 0)
+                            {
+                                Vector2 nextTarget = currentPath[0];
+                                // 将 transform.position 显式转换为 Vector2
+                                Vector2 currentPos = aiPlayer.transform.position;
+                                smoothDirection = (nextTarget - currentPos).normalized;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // 距离超过阈值（理论上不会发生）
+                    // 这里可以添加切换到Wander模式的逻辑
+                    Debug.Log("玩家距离过远，应切换到Wander模式");
+                }
+            }
+        }
+    }

@@ -9,5 +9,7 @@ public class Tags
     public const string BombEffect = "BombEffect";
     public const string Player = "player";
     public const string Prop = "Prop";
+    public const string Bomb = "Bomb";
+
 
 }

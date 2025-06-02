@@ -73,7 +73,7 @@ public class PropController : MonoBehaviour
     private void ActivateProp()
     {
         // Disable wall properties
-        tag = "Untagged";
+        tag = "Prop";
         gameObject.layer = 0; // Default layer
         wallCollider.isTrigger = true;
 

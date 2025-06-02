@@ -157,7 +157,7 @@ Camera:
   m_GameObject: {fileID: 1666018179}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -275,6 +275,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPre1: {fileID: 3379683727069454930, guid: 10385388cf786874aa6c47c47729bb6b, type: 3}
   playerPre2: {fileID: 2785244656653940999, guid: 12793e1becdbe0b43adec16e9f56a0e3, type: 3}
+  AIPlayerPre1: {fileID: 8452622818778968431, guid: e2c6dccaff8c2414c87278e0a11e914b, type: 3}
+  AIPlayerPre2: {fileID: 2072864161409172853, guid: 4a9fb021645476e468e8efb6ec39de76, type: 3}
 --- !u!114 &2088887262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,8 +312,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8ccb5bcc2d76f2468276c3f312d606e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPre1: {fileID: 3379683727069454930, guid: 10385388cf786874aa6c47c47729bb6b, type: 3}
-  playerPre2: {fileID: 2785244656653940999, guid: 12793e1becdbe0b43adec16e9f56a0e3, type: 3}
+  playerPre1: {fileID: 0}
+  playerPre2: {fileID: 0}
+  AIPlayerPre1: {fileID: 0}
+  AIPlayerPre2: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

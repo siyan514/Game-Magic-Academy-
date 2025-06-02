@@ -9,6 +9,7 @@ TagManager:
   - SuperWall
   - Wall
   - player
+  - Prop
   layers:
   - Default
   - TransparentFX
@@ -17,8 +18,8 @@ TagManager:
   - Water
   - UI
   - wall
+  - Bomb
   - player
-  - 
   - 
   - 
   - 
