@@ -8,7 +8,9 @@ public enum ObjectType
     Wall,
     Prop,
     Bomb,
-    BombEffect
+    BombEffect,
+    Enermy,
+    EnemyWall
 }
 
 [System.Serializable]

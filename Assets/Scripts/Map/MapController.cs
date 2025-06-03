@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
+    public GameObject enemyWallPrefab; // 敌人墙预制体
+    [Range(0f, 1f)] public float enemyWallSpawnChance = 0.2f; // 敌人墙生成概率
+
+    public GameObject enemyPrefab;
+
+
     private int X, Y;
     private List<Vector2> emptyPointList = new List<Vector2>();
     private List<Vector2> superWallPointList = new List<Vector2>();
@@ -44,6 +50,7 @@ public class MapController : MonoBehaviour
         createSuperWall();
         findEmptyPoint();
         CreateWall(wallCount);
+        CreateEnemyWalls();
         createProps();
     }
 
@@ -161,14 +168,46 @@ public class MapController : MonoBehaviour
             int index = Random.Range(0, emptyPointList.Count);
             GameObject wall = ObjectPool.instance.Get(ObjectType.Wall, emptyPointList[index]);
             emptyPointList.RemoveAt(index);
+
             if (poolObjectDic.ContainsKey(ObjectType.Wall) == false)
             {
                 poolObjectDic.Add(ObjectType.Wall, new List<GameObject>());
             }
-            else
+            poolObjectDic[ObjectType.Wall].Add(wall);
+        }
+    }
+
+    private void CreateEnemyWalls()
+    {
+        int count = Mathf.RoundToInt(emptyPointList.Count * enemyWallSpawnChance);
+        count = Mathf.Clamp(count, 0, emptyPointList.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            if (emptyPointList.Count == 0) break;
+
+            int index = Random.Range(0, emptyPointList.Count);
+            Vector2 pos = emptyPointList[index];
+            emptyPointList.RemoveAt(index);
+
+            GameObject enemyWall = ObjectPool.instance.Get(ObjectType.EnemyWall, pos);
+            if (enemyWall == null)
             {
-                poolObjectDic[ObjectType.Wall].Add(wall);
+                Debug.LogError("Failed to get EnemyWall from pool");
+                continue;
             }
+
+            EnemyWallController controller = enemyWall.GetComponent<EnemyWallController>();
+            if (controller != null)
+            {
+                controller.enemyPrefab = enemyPrefab;
+            }
+
+            if (poolObjectDic.ContainsKey(ObjectType.EnemyWall) == false)
+            {
+                poolObjectDic.Add(ObjectType.EnemyWall, new List<GameObject>());
+            }
+            poolObjectDic[ObjectType.EnemyWall].Add(enemyWall);
         }
     }
 
@@ -193,4 +232,5 @@ public class MapController : MonoBehaviour
             }
         }
     }
+
 }

@@ -10,12 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2460101624543291632}
   - component: {fileID: 3092822806200111311}
-  - component: {fileID: -5584288899114838774}
+  - component: {fileID: 4722878603368215680}
   - component: {fileID: 3361236848907041303}
-  - component: {fileID: -2217076366372380717}
   - component: {fileID: -4776514008949630006}
   - component: {fileID: 118190719925428998}
-  m_Layer: 7
+  m_Layer: 9
   m_Name: player_3
   m_TagString: player
   m_Icon: {fileID: 0}
@@ -89,7 +88,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-5584288899114838774
+--- !u!114 &4722878603368215680
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,9 +97,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8452622818778968431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dba8e95ceec51ca4093272712de2b707, type: 3}
+  m_Script: {fileID: 11500000, guid: 03b5be5d1f0370a4c8f20215b7f7dc6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 1
+  damageToPlayer: 1
+  attackCooldown: 1
+  pathUpdateInterval: 0.5
+  explosionPrefab: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!95 &3361236848907041303
 Animator:
   serializedVersion: 5
@@ -122,18 +127,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-2217076366372380717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8452622818778968431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86e17a5fc16bb9f48804cfd10d8d12c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &-4776514008949630006
 Rigidbody2D:
   serializedVersion: 4

@@ -27,8 +27,8 @@ public class GameController : MonoBehaviour
         playerManager = gameObject.GetComponent<PlayerManagement>();
         playerManager.playerPre1 = playerPre1;
         playerManager.playerPre2 = playerPre2;
-        playerManager.AIPlayerPre1 = AIPlayerPre1;
-        playerManager.AIPlayerPre2 = AIPlayerPre2;
+        // playerManager.AIPlayerPre1 = AIPlayerPre1;
+        // playerManager.AIPlayerPre2 = AIPlayerPre2;
         playerManager.accessiblePoints = mapController.accessiblePointList;
         LevelCtrl();
     }
@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
 
         mapController.initMap(x, y, x * y);
         playerManager.CreatePlayers(mapController);
-        playerManager.CreateAIPlayer(mapController, mapController.accessiblePointList);
+        // playerManager.CreateAIPlayer(mapController, mapController.accessiblePointList);
         levelCount++;
     }
 

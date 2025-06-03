@@ -57,7 +57,7 @@ public class HumanPlayer : PlayerBase
             );
 
             GameObject bomb = ObjectPool.instance.Get(ObjectType.Bomb, bombPos);
-            bomb.GetComponent<BombController>().Init(Range, BombTime, () => AddBomb());
+            bomb.GetComponent<BombController>().Init(Range, BombTime, () => AddBomb(), this);
         }
     }
 

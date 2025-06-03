@@ -96,6 +96,7 @@ public abstract class PlayerBase : MonoBehaviour
     {
         if (BombCount > 0) BombCount--;
     }
+    
 
     // Damage effect coroutine
     protected IEnumerator InjuredEffect(float duration)

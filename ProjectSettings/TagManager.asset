@@ -10,18 +10,19 @@ TagManager:
   - Wall
   - player
   - Prop
+  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Temp
   - Water
   - UI
   - wall
   - Bomb
   - player
-  - 
-  - 
+  - Enemy
+  - BombEffect
   - 
   - 
   - 

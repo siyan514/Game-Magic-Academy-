@@ -246,6 +246,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fd008f3b057daa4c817b4803f987d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyWallPrefab: {fileID: 7465386373915321946, guid: 1c4a2f9943382574cb1d212b48237a0e, type: 3}
+  enemyWallSpawnChance: 0.2
+  enemyPrefab: {fileID: 2646373701213086085, guid: d0900526222d5474084fb5116053dd3f, type: 3}
+  accessiblePointList: []
 --- !u!4 &2088887260
 Transform:
   m_ObjectHideFlags: 0
@@ -300,6 +304,10 @@ MonoBehaviour:
     prefab: {fileID: 5744628953232903062, guid: f5226cdb48b7a8b44a697e4c79fb3a56, type: 3}
   - type: 3
     prefab: {fileID: 1437385972316113153, guid: ecf13c2bac0235546b8974b171c91057, type: 3}
+  - type: 6
+    prefab: {fileID: 7465386373915321946, guid: 1c4a2f9943382574cb1d212b48237a0e, type: 3}
+  - type: 5
+    prefab: {fileID: 2646373701213086085, guid: d0900526222d5474084fb5116053dd3f, type: 3}
 --- !u!114 &2088887263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,8 +322,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPre1: {fileID: 0}
   playerPre2: {fileID: 0}
-  AIPlayerPre1: {fileID: 0}
-  AIPlayerPre2: {fileID: 0}
+  accessiblePoints: []
+  players: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
