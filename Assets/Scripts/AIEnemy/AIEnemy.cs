@@ -4,9 +4,10 @@ using System.Linq;
 
 public class AIEnemy : MonoBehaviour
 {
-    public enum EnemyState { Hidden, Active, Chasing, Dead }
+    public enum EnemyState { Hidden, Active, Chasing, Wandering, Dead }
 
     [Header("Enemy Settings")]
+    public float wanderingSpeed = 3f;
     public float moveSpeed = 2f;
     public int damageToPlayer = 1;
     public float attackCooldown = 3f;
@@ -33,6 +34,14 @@ public class AIEnemy : MonoBehaviour
     private Vector2Int targetGridPosition;
     private Vector3 lastMoveDirection = Vector3.right;
 
+    [Header("Wandering Settings")]
+    private int dirID;
+    private Vector2 dirVector;
+
+
+
+
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
@@ -40,6 +49,7 @@ public class AIEnemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentPath = new List<Vector2Int>();
         SetState(EnemyState.Hidden);
+        WanderDir(Random.Range(0, 4));
     }
 
     public void Initialize(Vector2Int position, PlayerBase owner)
@@ -58,7 +68,7 @@ public class AIEnemy : MonoBehaviour
             StartCoroutine(ActivationRoutine());
         }
     }
-    
+
     private System.Collections.IEnumerator ActivationRoutine()
     {
         SetState(EnemyState.Active);
@@ -74,7 +84,7 @@ public class AIEnemy : MonoBehaviour
         if (col != null) col.enabled = true;
 
         FindTargetPlayer();
-        
+
         // 开始寻路
         UpdatePath();
     }
@@ -86,30 +96,64 @@ public class AIEnemy : MonoBehaviour
             targetPlayer = bombOwner.transform;
             return;
         }
+        else
+        {
+            SetState(EnemyState.Wandering);
+            print(currentState);
+            return;
+        }
     }
 
     private void Update()
     {
-        if (currentState != EnemyState.Chasing) return;
-        if (targetPlayer == null) 
+        if (currentState == EnemyState.Chasing)
         {
-            FindTargetPlayer();
-            return;
-        }
+            if (targetPlayer == null)
+            {
+                FindTargetPlayer();
+                return;
+            }
 
-        if (bombOwner == null || !bombOwner.IsActive)
+            if (bombOwner == null || !bombOwner.IsActive)
+            {
+                return;
+            }
+
+            // 定期更新路径
+            if (Time.time - lastPathUpdate > pathUpdateInterval)
+            {
+                UpdatePath();
+            }
+
+            // 沿路径移动
+            MoveAlongPath();
+        }
+        else if (currentState == EnemyState.Wandering)
         {
-            return;
+            rig.MovePosition((Vector2)transform.position + dirVector * wanderingSpeed * Time.deltaTime);
         }
+    }
 
-        // 定期更新路径
-        if (Time.time - lastPathUpdate > pathUpdateInterval)
+    private void WanderDir(int dir)
+    {
+        dirID = dir;
+        switch (dirID)
         {
-            UpdatePath();
+            case 0:
+                dirVector = Vector2.up;
+                break;
+            case 1:
+                dirVector = Vector2.down;
+                break;
+            case 2:
+                dirVector = Vector2.left;
+                break;
+            case 3:
+                dirVector = Vector2.right;
+                break;
+            default:
+                break;
         }
-
-        // 沿路径移动
-        MoveAlongPath();
     }
 
     /// <summary>
@@ -120,13 +164,13 @@ public class AIEnemy : MonoBehaviour
         if (targetPlayer == null) return;
 
         lastPathUpdate = Time.time;
-        
+
         // 获取当前网格位置和目标网格位置
         Vector2Int currentGridPos = new Vector2Int(
             Mathf.RoundToInt(transform.position.x),
             Mathf.RoundToInt(transform.position.y)
         );
-        
+
         Vector2Int targetGridPos = new Vector2Int(
             Mathf.RoundToInt(targetPlayer.position.x),
             Mathf.RoundToInt(targetPlayer.position.y)
@@ -157,14 +201,14 @@ public class AIEnemy : MonoBehaviour
 
         Vector2Int targetWaypoint = currentPath[currentWaypointIndex];
         Vector3 targetWorldPos = new Vector3(targetWaypoint.x, targetWaypoint.y, 0);
-        
+
         // 计算移动方向
         Vector3 direction = (targetWorldPos - transform.position).normalized;
-        
+
         // 移动到目标点
         transform.position = Vector3.MoveTowards(
-            transform.position, 
-            targetWorldPos, 
+            transform.position,
+            targetWorldPos,
             moveSpeed * Time.deltaTime
         );
 
@@ -197,16 +241,16 @@ public class AIEnemy : MonoBehaviour
         if (lastMoveDirection.x > 0.1f)
         {
             spriteRenderer.transform.localScale = new Vector3(
-                Mathf.Abs(spriteRenderer.transform.localScale.x), 
-                spriteRenderer.transform.localScale.y, 
+                Mathf.Abs(spriteRenderer.transform.localScale.x),
+                spriteRenderer.transform.localScale.y,
                 spriteRenderer.transform.localScale.z
             );
         }
         else if (lastMoveDirection.x < -0.1f)
         {
             spriteRenderer.transform.localScale = new Vector3(
-                -Mathf.Abs(spriteRenderer.transform.localScale.x), 
-                spriteRenderer.transform.localScale.y, 
+                -Mathf.Abs(spriteRenderer.transform.localScale.x),
+                spriteRenderer.transform.localScale.y,
                 spriteRenderer.transform.localScale.z
             );
         }
@@ -217,10 +261,15 @@ public class AIEnemy : MonoBehaviour
     /// </summary>
     private void OnDrawGizmos()
     {
+        Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, 1, 0));
+        Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -1, 0));
+        Gizmos.DrawLine(transform.position, transform.position + new Vector3(1, 0, 0));
+        Gizmos.DrawLine(transform.position, transform.position + new Vector3(-1, 0, 0));
+
         if (!enablePathDrawing || currentPath == null || currentPath.Count == 0) return;
 
         Gizmos.color = pathColor;
-        
+
         // 绘制路径线段
         for (int i = 0; i < currentPath.Count - 1; i++)
         {
@@ -233,7 +282,7 @@ public class AIEnemy : MonoBehaviour
         for (int i = 0; i < currentPath.Count; i++)
         {
             Vector3 point = new Vector3(currentPath[i].x, currentPath[i].y, 0);
-            
+
             if (i == currentWaypointIndex)
             {
                 // 当前目标点用不同颜色
@@ -266,14 +315,44 @@ public class AIEnemy : MonoBehaviour
                 }
             }
         }
+
+        if (currentState == EnemyState.Wandering)
+        {
+            List<int> dirList = new List<int>();
+            if (Physics2D.Raycast(transform.position, Vector2.up, 1, 1 << 6) == false)
+            {
+                dirList.Add(0);
+            }
+            if (Physics2D.Raycast(transform.position, Vector2.down, 1, 1 << 6) == false)
+            {
+                dirList.Add(1);
+            }
+            if (Physics2D.Raycast(transform.position, Vector2.left, 1, 1 << 6) == false)
+            {
+                dirList.Add(2);
+            }
+            if (Physics2D.Raycast(transform.position, Vector2.right, 1, 1 << 6) == false)
+            {
+                dirList.Add(3);
+            }
+            print(dirList.Count);
+
+            if (dirList.Count > 0)
+            {
+                int index = Random.Range(0, dirList.Count);
+                WanderDir(dirList[index]);
+            }
+        }
     }
-    
+
+
+
     public void Die()
     {
         currentState = EnemyState.Dead;
 
         SetState(EnemyState.Dead);
- 
+
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null) collider.enabled = false;
 

@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
-    public GameObject enemyWallPrefab; // 敌人墙预制体
-    [Range(0f, 1f)] public float enemyWallSpawnChance = 0.2f; // 敌人墙生成概率
+    public Sprite[] wallSprites;
+    public Sprite[] enemyWallSprites; 
+    public Sprite[] propSprites;    
+
+    public GameObject enemyWallPrefab; 
+    [Range(0f, 1f)] public float enemyWallSpawnChance = 0.2f; 
 
     public GameObject enemyPrefab;
 
@@ -47,6 +51,7 @@ public class MapController : MonoBehaviour
         ResetMap();
         Y = y;
         X = x;
+        createFloor();
         createSuperWall();
         findEmptyPoint();
         CreateWall(wallCount);
@@ -86,14 +91,14 @@ public class MapController : MonoBehaviour
 
         for (int x = -(X + 2); x <= X; x++)
         {
-            spawnSuperWall(new Vector2(x, Y));
-            spawnSuperWall(new Vector2(x, -Y - 2));
+            spawnOuterWall(new Vector2(x, Y));
+            spawnOuterWall(new Vector2(x, -Y - 2));
         }
 
         for (int y = -(Y + 1); y <= Y - 1; y++)
         {
-            spawnSuperWall(new Vector2(-(X + 2), y));
-            spawnSuperWall(new Vector2(X, y));
+            spawnOuterWall(new Vector2(-(X + 2), y));
+            spawnOuterWall(new Vector2(X, y));
         }
     }
 
@@ -110,6 +115,48 @@ public class MapController : MonoBehaviour
         else
         {
             poolObjectDic[ObjectType.SuperWall].Add(superWall);
+        }
+    }
+    private void spawnOuterWall(Vector2 pos)
+    {
+        Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
+        superWallPointList.Add(intPos);
+
+        GameObject outerWall = ObjectPool.instance.Get(ObjectType.OuterWall, pos);
+        if (poolObjectDic.ContainsKey(ObjectType.OuterWall) == false)
+        {
+            poolObjectDic.Add(ObjectType.OuterWall, new List<GameObject>());
+        }
+        else
+        {
+            poolObjectDic[ObjectType.OuterWall].Add(outerWall);
+        }
+    }
+
+    private void createFloor()
+    {
+        for (int x = -(X + 1); x <= X - 1; x++)
+        {
+            for (int y = Y - 1; y >= -Y - 1; y--)
+            {
+                spawnFloor(new Vector2(x, y));
+            }
+        }
+    }
+
+    private void spawnFloor(Vector2 pos)
+    {
+        Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
+        // superWallPointList.Add(intPos);
+
+        GameObject floor = ObjectPool.instance.Get(ObjectType.Floor, pos);
+        if (poolObjectDic.ContainsKey(ObjectType.Floor) == false)
+        {
+            poolObjectDic.Add(ObjectType.Floor, new List<GameObject>());
+        }
+        else
+        {
+            poolObjectDic[ObjectType.Floor].Add(floor);
         }
     }
 
@@ -169,6 +216,16 @@ public class MapController : MonoBehaviour
             GameObject wall = ObjectPool.instance.Get(ObjectType.Wall, emptyPointList[index]);
             emptyPointList.RemoveAt(index);
 
+            // === 新增：随机设置墙的Sprite ===
+            if (wallSprites != null && wallSprites.Length > 0)
+            {
+                SpriteRenderer renderer = wall.GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                {
+                    renderer.sprite = wallSprites[Random.Range(0, wallSprites.Length)];
+                }
+            }
+
             if (poolObjectDic.ContainsKey(ObjectType.Wall) == false)
             {
                 poolObjectDic.Add(ObjectType.Wall, new List<GameObject>());
@@ -191,6 +248,17 @@ public class MapController : MonoBehaviour
             emptyPointList.RemoveAt(index);
 
             GameObject enemyWall = ObjectPool.instance.Get(ObjectType.EnemyWall, pos);
+
+            // === 新增：随机设置敌人墙的Sprite ===
+            if (enemyWallSprites != null && enemyWallSprites.Length > 0)
+            {
+                SpriteRenderer renderer = enemyWall.GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                {
+                    renderer.sprite = enemyWallSprites[Random.Range(0, enemyWallSprites.Length)];
+                }
+            }
+
             if (enemyWall == null)
             {
                 Debug.LogError("Failed to get EnemyWall from pool");
@@ -222,6 +290,17 @@ public class MapController : MonoBehaviour
             int index = Random.Range(0, emptyPointList.Count);
             GameObject prop = ObjectPool.instance.Get(ObjectType.Prop, emptyPointList[index]);
             emptyPointList.RemoveAt(index);
+
+            // === 新增：随机设置道具的Sprite ===
+            if (propSprites != null && propSprites.Length > 0)
+            {
+                SpriteRenderer renderer = prop.GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                {
+                    renderer.sprite = propSprites[Random.Range(0, propSprites.Length)];
+                }
+            }
+
             if (poolObjectDic.ContainsKey(ObjectType.Prop) == false)
             {
                 poolObjectDic.Add(ObjectType.Prop, new List<GameObject>());

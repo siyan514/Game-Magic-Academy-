@@ -5,12 +5,15 @@ using UnityEngine;
 public enum ObjectType
 {
     SuperWall,
+    Floor,
+
     Wall,
     Prop,
     Bomb,
     BombEffect,
     Enermy,
-    EnemyWall
+    EnemyWall,
+    OuterWall
 }
 
 [System.Serializable]
