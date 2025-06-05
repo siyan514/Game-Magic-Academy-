@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03b5be5d1f0370a4c8f20215b7f7dc6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wanderingSpeed: 3
+  wanderingSpeed: 1
   moveSpeed: 2
   damageToPlayer: 1
   attackCooldown: 1

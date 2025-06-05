@@ -7,11 +7,12 @@ public class AIEnemy : MonoBehaviour
     public enum EnemyState { Hidden, Active, Chasing, Wandering, Dead }
 
     [Header("Enemy Settings")]
-    public float wanderingSpeed = 3f;
+    public float wanderingSpeed = 0.5f;
     public float moveSpeed = 2f;
     public int damageToPlayer = 1;
     public float attackCooldown = 3f;
     public float pathUpdateInterval = 0.5f;
+    private float rayDistance = 1f;
 
     [Header("Pathfinding Settings")]
     public bool enablePathDrawing = true;  // 是否启用路径绘制
@@ -37,6 +38,7 @@ public class AIEnemy : MonoBehaviour
     [Header("Wandering Settings")]
     private int dirID;
     private Vector2 dirVector;
+    public bool canMove = true;
 
 
 
@@ -98,6 +100,13 @@ public class AIEnemy : MonoBehaviour
         }
         else
         {
+            // 对齐到整数格子
+            transform.position = new Vector3(
+                Mathf.RoundToInt(transform.position.x),
+                Mathf.RoundToInt(transform.position.y),
+                0
+            );
+
             SetState(EnemyState.Wandering);
             print(currentState);
             return;
@@ -130,13 +139,34 @@ public class AIEnemy : MonoBehaviour
         }
         else if (currentState == EnemyState.Wandering)
         {
-            rig.MovePosition((Vector2)transform.position + dirVector * wanderingSpeed * Time.deltaTime);
+            if (canMove)
+            {
+                // rig.MovePosition((Vector2)transform.position + dirVector * wanderingSpeed * Time.deltaTime);
+                transform.position += (Vector3)dirVector * wanderingSpeed * Time.deltaTime;
+                HandleFacing(dirVector); // 添加这行处理朝向
+
+                // 更新动画参数
+                if (anim != null)
+                {
+                    anim.SetFloat("Horizontal", dirVector.x);
+                    anim.SetFloat("Vertical", dirVector.y);
+                }
+            }
+            else
+            {
+                WanderChangeDir();
+            }
         }
     }
 
     private void WanderDir(int dir)
     {
         dirID = dir;
+        transform.position = new Vector3(
+        Mathf.RoundToInt(transform.position.x),
+        Mathf.RoundToInt(transform.position.y),
+        0
+        );
         switch (dirID)
         {
             case 0:
@@ -316,32 +346,41 @@ public class AIEnemy : MonoBehaviour
             }
         }
 
-        if (currentState == EnemyState.Wandering)
+        if (collision.CompareTag(Tags.Wall) || collision.CompareTag(Tags.SuperWall))
         {
-            List<int> dirList = new List<int>();
-            if (Physics2D.Raycast(transform.position, Vector2.up, 1, 1 << 6) == false)
+            if (currentState == EnemyState.Wandering)
             {
-                dirList.Add(0);
+                transform.position = new Vector2(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+                WanderChangeDir();
             }
-            if (Physics2D.Raycast(transform.position, Vector2.down, 1, 1 << 6) == false)
-            {
-                dirList.Add(1);
-            }
-            if (Physics2D.Raycast(transform.position, Vector2.left, 1, 1 << 6) == false)
-            {
-                dirList.Add(2);
-            }
-            if (Physics2D.Raycast(transform.position, Vector2.right, 1, 1 << 6) == false)
-            {
-                dirList.Add(3);
-            }
-            print(dirList.Count);
+        }
+    }
 
-            if (dirList.Count > 0)
-            {
-                int index = Random.Range(0, dirList.Count);
-                WanderDir(dirList[index]);
-            }
+    private void WanderChangeDir()
+    {
+        List<int> possibleDirs = new List<int>();
+
+        // 检查四个方向是否可走
+        if (!Physics2D.Raycast(transform.position, Vector2.up, rayDistance, 1 << 6)) possibleDirs.Add(0);
+        if (!Physics2D.Raycast(transform.position, Vector2.down, rayDistance, 1 << 6)) possibleDirs.Add(1);
+        if (!Physics2D.Raycast(transform.position, Vector2.left, rayDistance, 1 << 6)) possibleDirs.Add(2);
+        if (!Physics2D.Raycast(transform.position, Vector2.right, rayDistance, 1 << 6)) possibleDirs.Add(3);
+
+        // 如果当前方向仍然可行，优先保持（避免频繁转向）
+        if (possibleDirs.Contains(dirID))
+        {
+            return; // 不改变方向
+        }
+        // 否则随机选一个新方向
+        else if (possibleDirs.Count > 0)
+        {
+            canMove = true;
+            int newDir = possibleDirs[Random.Range(0, possibleDirs.Count)];
+            WanderDir(newDir);
+        }
+        else
+        {
+            canMove = false;
         }
     }
 

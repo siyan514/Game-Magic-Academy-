@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -6473430150670837771}
   - component: {fileID: 9150810211100033814}
   - component: {fileID: 3894581528902871252}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: health point
   m_TagString: Prop
   m_Icon: {fileID: 0}

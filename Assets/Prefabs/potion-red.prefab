@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7641447844510698994}
   - component: {fileID: 54040759383970638}
   - component: {fileID: 5658739156590203738}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: potion-red
   m_TagString: Prop
   m_Icon: {fileID: 0}
