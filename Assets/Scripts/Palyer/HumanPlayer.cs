@@ -78,6 +78,9 @@ public class HumanPlayer : PlayerBase
             // Activate 3-second gray invincibility effect
             ActivateInvincibility(3f, false);
         }
+
+        if (GameUIController.instance != null)
+            GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
     }
 
     protected override IEnumerator DisappearAfterDelay(float delay)

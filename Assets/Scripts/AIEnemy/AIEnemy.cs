@@ -397,6 +397,9 @@ public class AIEnemy : MonoBehaviour
 
         if (rig != null) rig.simulated = false;
         Destroy(gameObject, 0.1f);
+
+        if (GameUIController.instance != null)
+            GameUIController.instance.UpdateEnemyCount(GameUIController.instance.totalEnemies - 1);
     }
 
     private void SetState(EnemyState newState)

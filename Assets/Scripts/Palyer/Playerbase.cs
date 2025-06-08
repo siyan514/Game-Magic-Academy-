@@ -90,6 +90,8 @@ public abstract class PlayerBase : MonoBehaviour
     public virtual void AddHealth()
     {
         HP++;
+        if (GameUIController.instance != null)
+            GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
     }
 
     public virtual void UseBomb()
@@ -200,6 +202,8 @@ public abstract class PlayerBase : MonoBehaviour
 
         // Disappear from screen
         StartCoroutine(DisappearAfterDelay(0.5f));
+        if (GameUIController.instance != null)
+            GameUIController.instance.UpdatePlayerHealth(PlayerIndex, 0);
     }
 
     // Delayed disappearance coroutine
