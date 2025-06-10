@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     public GameObject AIPlayerPre2;
     private MapController mapController;
     private int levelCount = 0;
+    private int time = 0;
     private PlayerManagement playerManager;
 
     private int player1Wins = 0;
@@ -35,27 +36,32 @@ public class GameController : MonoBehaviour
         // playerManager.AIPlayerPre2 = AIPlayerPre2;
         playerManager.accessiblePoints = mapController.accessiblePointList;
         LevelCtrl();
-        InitializeUI();
+        // InitializeUI();
     }
 
-    private void InitializeUI()
-    {
-        if (GameUIController.instance != null)
-        {
-            // 初始化玩家UI
-            GameUIController.instance.InitializePlayerUI(1, 3); // 假设初始3心
-            if (playerCount == 2)
-                GameUIController.instance.InitializePlayerUI(2, 3);
+    // private void InitializeUI()
+    // {
+    //     if (GameUIController.instance != null)
+    //     {
+    //         // 初始化玩家UI
+    //         GameUIController.instance.InitializePlayerUI(1, 3); // 假设初始3心
+    //         if (playerCount == 2)
+    //             GameUIController.instance.InitializePlayerUI(2, 3);
 
-            // 隐藏第二个玩家面板（如果是单人模式）
-            if (playerCount == 1)
-                GameUIController.instance.player2Panel.SetActive(false);
-        }
-    }
+    //         // 隐藏第二个玩家面板（如果是单人模式）
+    //         if (playerCount == 1)
+    //             GameUIController.instance.player2Panel.SetActive(false);
+    //     }
+    // }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.N))
+        CountEnemies();
+
+        GameUIController.instance.Refresh(playerManager.players[0].HP, playerManager.players[1].HP, player1Wins, player2Wins,
+        levelCount, time, currentEnemies);
+
+        if (CheckGameEnd() && !VictoryScene.instance.active)
         {
             LevelCtrl();
         }
@@ -66,6 +72,19 @@ public class GameController : MonoBehaviour
         if (playerManager != null)
             playerManager.DestroyAllPlayers();
 
+        AIEnemy[] enemies = FindObjectsOfType<AIEnemy>();
+        foreach (AIEnemy enemy in enemies)
+        {
+            Destroy(enemy.gameObject);
+        }
+
+        PropController[] props = FindObjectsOfType<PropController>();
+        foreach (PropController prop in props)
+        {
+            prop.ResetProp();
+            ObjectPool.instance.Add(ObjectType.Prop, prop.gameObject);
+        }
+
         int x = 7;
         int y = 6;
 
@@ -73,24 +92,25 @@ public class GameController : MonoBehaviour
         playerManager.CreatePlayers(mapController);
         // playerManager.CreateAIPlayer(mapController, mapController.accessiblePointList);
         levelCount++;
-        CountEnemies();
     }
 
     private void CountEnemies()
     {
         // 统计所有AIEnemy实例
         AIEnemy[] enemies = FindObjectsOfType<AIEnemy>();
-        currentEnemies = enemies.Length;
+        EnemyWallController[] hiddenEnemies = FindObjectsOfType<EnemyWallController>();
 
-        if (GameUIController.instance != null)
-        {
-            GameUIController.instance.totalEnemies = currentEnemies;
-            GameUIController.instance.UpdateEnemyCount(currentEnemies);
-        }
+        currentEnemies =  enemies.Length + hiddenEnemies.Length;
+
+        // if (GameUIController.instance != null)
+        // {
+        //     GameUIController.instance.totalEnemies = currentEnemies;
+        //     GameUIController.instance.UpdateEnemyCount(currentEnemies);
+        // }
     }
 
     // 检查游戏结束条件
-    private void CheckGameEnd()
+    private bool CheckGameEnd()
     {
         if (currentEnemies <= 0)
         {
@@ -99,8 +119,9 @@ public class GameController : MonoBehaviour
             {
                 // 单人模式：玩家胜利
                 player1Wins++;
-                if (GameUIController.instance != null)
-                    GameUIController.instance.UpdateWinCount(1, player1Wins);
+                VictoryScene.instance.display(1);
+
+                return true;
             }
             else
             {
@@ -108,17 +129,22 @@ public class GameController : MonoBehaviour
                 PlayerBase winner = DetermineWinner();
                 if (winner != null)
                 {
-                    if (winner.PlayerIndex == 1) player1Wins++;
-                    else player2Wins++;
-
-                    if (GameUIController.instance != null)
+                    if (winner.PlayerIndex == 1)
                     {
-                        GameUIController.instance.UpdateWinCount(1, player1Wins);
-                        GameUIController.instance.UpdateWinCount(2, player2Wins);
+                        player1Wins++;
+                        VictoryScene.instance.display(1);
                     }
+                    else
+                    {
+                        player2Wins++;
+                        VictoryScene.instance.display(2);
+                    }
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 
     private PlayerBase DetermineWinner()
@@ -132,7 +158,7 @@ public class GameController : MonoBehaviour
             if (player.IsActive && player.HP > 0)
             {
                 if (alivePlayer == null) alivePlayer = player;
-                else return null; // 多个玩家存活
+                else return null;
             }
         }
         return alivePlayer;

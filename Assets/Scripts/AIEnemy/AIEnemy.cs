@@ -52,6 +52,11 @@ public class AIEnemy : MonoBehaviour
         currentPath = new List<Vector2Int>();
         SetState(EnemyState.Hidden);
         WanderDir(Random.Range(0, 4));
+
+        if (rig != null) rig.simulated = false;
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+        if (spriteRenderer != null) spriteRenderer.enabled = false;
     }
 
     public void Initialize(Vector2Int position, PlayerBase owner)
@@ -67,6 +72,11 @@ public class AIEnemy : MonoBehaviour
         if (currentState == EnemyState.Hidden)
         {
             SetState(EnemyState.Active);
+
+            if (rig != null) rig.simulated = true;
+            Collider2D col = GetComponent<Collider2D>();
+            if (col != null) col.enabled = true;
+
             StartCoroutine(ActivationRoutine());
         }
     }
@@ -396,10 +406,17 @@ public class AIEnemy : MonoBehaviour
         if (collider != null) collider.enabled = false;
 
         if (rig != null) rig.simulated = false;
+
+        // EnemyWallController enemyWall = GetComponentInParent<EnemyWallController>();
+        // if (enemyWall != null)
+        // {
+        //     enemyWall.OnEnemyDefeated();
+        // }
+
         Destroy(gameObject, 0.1f);
 
-        if (GameUIController.instance != null)
-            GameUIController.instance.UpdateEnemyCount(GameUIController.instance.totalEnemies - 1);
+        // if (GameUIController.instance != null)
+            // GameUIController.instance.UpdateEnemyCount(GameUIController.instance.totalEnemies - 1);
     }
 
     private void SetState(EnemyState newState)

@@ -103,25 +103,4 @@ public class PlayerManagement : MonoBehaviour
     {
         return players.Find(p => p.PlayerIndex == index);
     }
-
-    public PlayerBase GetNearestPlayer(Vector2 position)
-    {
-        // PlayerBase nearest = null;
-        // float minDistance = float.MaxValue;
-
-        // foreach (var player in players)
-        // {
-        //     if (player == null || !player.IsActive) continue;
-
-        //     float distance = Vector2.Distance(position, player.transform.position);
-        //     if (distance < minDistance)
-        //     {
-        //         minDistance = distance;
-        //         nearest = player;
-        //     }
-        // }
-        // return nearest;
-
-        return GetPlayer(1);
-    }
 }

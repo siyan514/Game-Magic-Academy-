@@ -37,7 +37,7 @@ public class PropController : MonoBehaviour
     /// <summary>
     /// Reset the prop to its initial wall state
     /// </summary>
-    private void ResetProp()
+    public void ResetProp()
     {
         tag = "Wall";
         gameObject.layer = LayerMask.NameToLayer("wall");

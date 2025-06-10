@@ -6,12 +6,14 @@ public abstract class PlayerBase : MonoBehaviour
 {
     // Player core attributes
     public int HP { get; protected set; }
+    public int winNum { get; set; }
     public int BombCount { get; protected set; }
     public int Range { get; protected set; }
     public int PlayerIndex { get; protected set; }
     public float BombTime { get; protected set; }
     public bool IsInvincible { get; protected set; }
     public bool IsActive { get; protected set; } = true;
+
 
     // Component references
     protected Animator anim;
@@ -34,6 +36,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     public virtual void Init(int range, int hp, float bombTime, int index)
     {
+        winNum = 0;
         Range = range;
         HP = hp;
         BombTime = bombTime;
@@ -90,8 +93,8 @@ public abstract class PlayerBase : MonoBehaviour
     public virtual void AddHealth()
     {
         HP++;
-        if (GameUIController.instance != null)
-            GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
+        // if (GameUIController.instance != null)
+        //     GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
     }
 
     public virtual void UseBomb()
@@ -202,8 +205,8 @@ public abstract class PlayerBase : MonoBehaviour
 
         // Disappear from screen
         StartCoroutine(DisappearAfterDelay(0.5f));
-        if (GameUIController.instance != null)
-            GameUIController.instance.UpdatePlayerHealth(PlayerIndex, 0);
+        // if (GameUIController.instance != null)
+            // GameUIController.instance.UpdatePlayerHealth(PlayerIndex, 0);
     }
 
     // Delayed disappearance coroutine

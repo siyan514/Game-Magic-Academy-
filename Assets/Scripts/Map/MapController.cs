@@ -66,13 +66,26 @@ public class MapController : MonoBehaviour
     {
         emptyPointList.Clear();
         superWallPointList.Clear();
+
         foreach (var item in poolObjectDic)
         {
+            // 创建新列表来存储未销毁的对象
+            List<GameObject> validObjects = new List<GameObject>();
+
             foreach (var obj in item.Value)
             {
-                ObjectPool.instance.Add(item.Key, obj);
+                if (obj != null) // 检查对象是否未被销毁
+                {
+                    validObjects.Add(obj);
+                    ObjectPool.instance.Add(item.Key, obj);
+                }
             }
+
+            // 更新字典中的列表
+            item.Value.Clear();
+            item.Value.AddRange(validObjects);
         }
+
         poolObjectDic.Clear();
     }
 
@@ -236,7 +249,8 @@ public class MapController : MonoBehaviour
 
     private void CreateEnemyWalls()
     {
-        int count = Mathf.RoundToInt(emptyPointList.Count * enemyWallSpawnChance);
+        // int count = Mathf.RoundToInt(emptyPointList.Count * enemyWallSpawnChance);
+        int count = 0;
         count = Mathf.Clamp(count, 0, emptyPointList.Count);
 
         for (int i = 0; i < count; i++)

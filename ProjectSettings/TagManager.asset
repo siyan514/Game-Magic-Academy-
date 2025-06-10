@@ -67,3 +67,6 @@ TagManager:
   - name: player
     uniqueID: 1047265161
     locked: 0
+  - name: victory
+    uniqueID: 3531056493
+    locked: 0

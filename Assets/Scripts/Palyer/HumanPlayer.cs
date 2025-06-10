@@ -79,8 +79,8 @@ public class HumanPlayer : PlayerBase
             ActivateInvincibility(3f, false);
         }
 
-        if (GameUIController.instance != null)
-            GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
+        // if (GameUIController.instance != null)
+        //     GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
     }
 
     protected override IEnumerator DisappearAfterDelay(float delay)
