@@ -255,7 +255,7 @@ public class MapController : MonoBehaviour
         int count = 0;
         if (currentLevel == 1)
         {
-            count = 0;
+            count = 5;
         }
         else if (currentLevel == 2)
         {
