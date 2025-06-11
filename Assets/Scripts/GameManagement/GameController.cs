@@ -105,7 +105,15 @@ public class GameController : MonoBehaviour
     {
         if (CheckAllPlayersDead())
         {
-            VictoryScene.instance.displayFailed();
+            // 添加空引用检查
+            if (VictoryScene.instance != null)
+            {
+                VictoryScene.instance.displayFailed();
+            }
+            else
+            {
+                Debug.LogError("VictoryScene instance is null! Cannot display failure screen.");
+            }
             return true;
         }
 
@@ -115,25 +123,14 @@ public class GameController : MonoBehaviour
             if (playerCount == 1)
             {
                 return HandleVictory(1);
-                // // 单人模式：只要敌人全灭就胜利
-                // player1Wins++;
-                // currentWinner = 1;
-                // return true;
+
             }
-            else // 双人模式
+            else 
             {
                 if (alivePlayers == 1)
                 {
                     PlayerBase winner = DetermineWinner();
-                    // if (winner != null)
-                    // {
-                    //     if (winner.PlayerIndex == 1)
-                    //         player1Wins++;
-                    //     else
-                    //         player2Wins++;
-                    //     currentWinner = winner.PlayerIndex;
-                    //     return true;
-                    // }
+
                     if (winner != null)
                     {
                         return HandleVictory(winner.PlayerIndex);

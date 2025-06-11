@@ -20,8 +20,24 @@ public class VictoryScene : MonoBehaviour
 
     private void Awake()
     {
+        // 确保单例唯一性
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         instance = this;
-        gameObject.SetActive(false);
+        gameObject.SetActive(false);  // 保持初始禁用状态
+    }
+
+    // 添加对象销毁时的清理
+    private void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
+        }
     }
 
     public bool IsActive => gameObject.activeSelf;
