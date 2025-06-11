@@ -15,6 +15,8 @@ public class MapController : MonoBehaviour
 
 
     private int X, Y;
+
+    private int currentLevel = 0;
     private List<Vector2> emptyPointList = new List<Vector2>();
     private List<Vector2> superWallPointList = new List<Vector2>();
     public List<Vector2> accessiblePointList = new List<Vector2>();
@@ -46,8 +48,9 @@ public class MapController : MonoBehaviour
         return new Vector2(1, 1);
     }
 
-    public void initMap(int x, int y, int wallCount)
+    public void initMap(int x, int y, int wallCount, int levelCount)
     {
+        currentLevel = levelCount;
         ResetMap();
         Y = y;
         X = x;
@@ -130,6 +133,7 @@ public class MapController : MonoBehaviour
             poolObjectDic[ObjectType.SuperWall].Add(superWall);
         }
     }
+
     private void spawnOuterWall(Vector2 pos)
     {
         Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
@@ -205,13 +209,13 @@ public class MapController : MonoBehaviour
         emptyPointList.Remove(new Vector2(X - 1, -Y - 1));
         emptyPointList.Remove(new Vector2(X - 1, -Y));
 
-        emptyPointList.Remove(new Vector2(X - 1, Y - 1));
-        emptyPointList.Remove(new Vector2(X - 1, Y - 2));
-        emptyPointList.Remove(new Vector2(X - 2, Y - 1));
+        // emptyPointList.Remove(new Vector2(X - 1, Y - 1));
+        // emptyPointList.Remove(new Vector2(X - 1, Y - 2));
+        // emptyPointList.Remove(new Vector2(X - 2, Y - 1));
 
-        emptyPointList.Remove(new Vector2(-X - 1, -Y - 1));
-        emptyPointList.Remove(new Vector2(-X - 1, -Y));
-        emptyPointList.Remove(new Vector2(-X, -Y - 1));
+        // emptyPointList.Remove(new Vector2(-X - 1, -Y - 1));
+        // emptyPointList.Remove(new Vector2(-X - 1, -Y));
+        // emptyPointList.Remove(new Vector2(-X, -Y - 1));
     }
 
     /// <summary>
@@ -229,7 +233,6 @@ public class MapController : MonoBehaviour
             GameObject wall = ObjectPool.instance.Get(ObjectType.Wall, emptyPointList[index]);
             emptyPointList.RemoveAt(index);
 
-            // === 新增：随机设置墙的Sprite ===
             if (wallSprites != null && wallSprites.Length > 0)
             {
                 SpriteRenderer renderer = wall.GetComponent<SpriteRenderer>();
@@ -249,8 +252,19 @@ public class MapController : MonoBehaviour
 
     private void CreateEnemyWalls()
     {
-        // int count = Mathf.RoundToInt(emptyPointList.Count * enemyWallSpawnChance);
         int count = 0;
+        if (currentLevel == 1)
+        {
+            count = 5;
+        }
+        else if (currentLevel == 2)
+        {
+            count = 15;
+        }
+        else if (currentLevel == 3)
+        {
+            count = 20;
+        }
         count = Mathf.Clamp(count, 0, emptyPointList.Count);
 
         for (int i = 0; i < count; i++)
@@ -298,7 +312,19 @@ public class MapController : MonoBehaviour
     /// </summary>
     private void createProps()
     {
-        int count = Random.Range(5, 10 + (int)(emptyPointList.Count * 0.05f));
+        int count = 0;
+        if (currentLevel == 1)
+        {
+            count = 18;
+        }
+        else if (currentLevel == 2)
+        {
+            count = 15;
+        }
+        else if (currentLevel == 3)
+        {
+            count = 12;
+        }
         for (int i = 0; i < count; i++)
         {
             int index = Random.Range(0, emptyPointList.Count);

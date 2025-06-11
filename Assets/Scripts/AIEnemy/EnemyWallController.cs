@@ -118,13 +118,4 @@ public class EnemyWallController : MonoBehaviour
         Destroy(gameObject);
     }
 
-
-    /// <summary>
-    /// 敌人被消灭后重置
-    /// </summary>
-    // public void OnEnemyDefeated()
-    // {
-    //     ResetEnemyWall();
-    //     ObjectPool.instance.Add(ObjectType.EnemyWall, gameObject);
-    // }
 }
