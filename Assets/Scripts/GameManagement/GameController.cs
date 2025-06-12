@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// The whole game controller implementation class
+/// </summary>
 public class GameController : MonoBehaviour
 {
     public static GameController instance;
@@ -37,7 +39,9 @@ public class GameController : MonoBehaviour
         playerManager.accessiblePoints = mapController.accessiblePointList;
         LevelCtrl();
     }
-
+    /// <summary>
+    /// update the game progress, check if current game is end 
+    /// </summary>
     private void Update()
     {
         if (!interval)
@@ -55,12 +59,18 @@ public class GameController : MonoBehaviour
         }
         
     }
+
+    /// <summary>
+    /// start the next level
+    /// </summary>
     public void StartNextLevel()
     {
         LevelCtrl();
         interval = false;
     }
-
+    /// <summary>
+    /// level control function, initialize the next level
+    /// </summary>
     private void LevelCtrl()
     {
         if (playerManager != null)
@@ -86,7 +96,9 @@ public class GameController : MonoBehaviour
         mapController.initMap(x, y, x * y, levelCount);
         playerManager.CreatePlayers(mapController);
     }
-
+    /// <summary>
+    /// get the number of enemies
+    /// </summary>
     private void CountEnemies()
     {
         AIEnemy[] enemies = FindObjectsOfType<AIEnemy>();
@@ -94,18 +106,24 @@ public class GameController : MonoBehaviour
 
         currentEnemies =  enemies.Length + hiddenEnemies.Length;
     }
+    /// <summary>
+    /// if the current level failed , player can resart the current level
+    /// </summary>
     public void RestartLevel()
     {
         levelCount--;
         LevelCtrl();
         interval = false;
     }
-
+    /// <summary>
+    /// check if the current game is end
+    /// </summary>
+    /// <returns></returns>
     private bool CheckGameEnd()
     {
         if (CheckAllPlayersDead())
         {
-            // 添加空引用检查
+            // Add an empty reference check
             if (VictoryScene.instance != null)
             {
                 VictoryScene.instance.displayFailed();
@@ -141,9 +159,14 @@ public class GameController : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// if any player win, than display the winner page
+    /// </summary>
+    /// <param name="winnerIndex"></param>
+    /// <returns></returns>
     private bool HandleVictory(int winnerIndex)
     {
-        // 更新胜利计数
+        // Update the victory count
         if (winnerIndex == 1)
             player1Wins++;
         else
@@ -151,11 +174,11 @@ public class GameController : MonoBehaviour
 
         currentWinner = winnerIndex;
 
-        // 检查是否为最后一关
-        if (levelCount >= 3) // 注意：levelCount从0开始计数
+        // Check if it is the last level
+        if (levelCount >= 3) 
         {
-            // 判断最终胜利者
-            int finalWinner = 0; // 0表示平局
+            // Judge the ultimate winner
+            int finalWinner = 0; 
             if (player1Wins > player2Wins)
                 finalWinner = 1;
             else if (player2Wins > player1Wins)
@@ -165,13 +188,16 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            // 普通关卡胜利
+            // Victory in the ordinary level
             VictoryScene.instance.display(winnerIndex);
         }
 
         return true;
     }
-
+    /// <summary>
+    /// check if all players dead
+    /// </summary>
+    /// <returns></returns>
     private bool CheckAllPlayersDead()
     {
         if (playerManager == null) return false;
@@ -184,8 +210,10 @@ public class GameController : MonoBehaviour
 
         return true;
     }
-
-    // 新增辅助方法：统计存活玩家数
+    /// <summary>
+    /// Count the number of surviving players
+    /// </summary>
+    /// <returns></returns>
     private int CountAlivePlayers()
     {
         if (playerManager == null) return 0;
@@ -198,7 +226,10 @@ public class GameController : MonoBehaviour
         }
         return aliveCount;
     }
-
+    /// <summary>
+    /// return the winner
+    /// </summary>
+    /// <returns></returns>
     private PlayerBase DetermineWinner()
     {
         if (playerManager == null) return null;
@@ -209,17 +240,18 @@ public class GameController : MonoBehaviour
         {
             if (player != null && player.HP > 0)
             {
-                Debug.Log("这里"+player.PlayerIndex + player.HP);
+                Debug.Log("这里" + player.PlayerIndex + player.HP);
                 alivePlayer = player;
             }
         }
 
-        // 只有当有且只有一个玩家存活时才返回胜利者
         return alivePlayer;
     }
-
-
-
+    /// <summary>
+    /// check if the wall is superwall that cannot be destroyed
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     public bool IsSuperWall(Vector2 pos)
     {
         return mapController.IsSuperWall(pos);

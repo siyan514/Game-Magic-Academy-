@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Map generation implementation class
+/// </summary>
 public class MapController : MonoBehaviour
 {
     public Sprite[] wallSprites;
@@ -72,19 +74,19 @@ public class MapController : MonoBehaviour
 
         foreach (var item in poolObjectDic)
         {
-            // 创建新列表来存储未销毁的对象
+            // Create a new list to store the undestroyed objects
             List<GameObject> validObjects = new List<GameObject>();
 
             foreach (var obj in item.Value)
             {
-                if (obj != null) // 检查对象是否未被销毁
+                if (obj != null) // Check whether the object has not been destroyed
                 {
                     validObjects.Add(obj);
                     ObjectPool.instance.Add(item.Key, obj);
                 }
             }
 
-            // 更新字典中的列表
+            // Update the list in the dictionary
             item.Value.Clear();
             item.Value.AddRange(validObjects);
         }
@@ -117,7 +119,10 @@ public class MapController : MonoBehaviour
             spawnOuterWall(new Vector2(X, y));
         }
     }
-
+    /// <summary>
+    /// spawn the super wall that cannot be destroyed
+    /// </summary>
+    /// <param name="pos"></param>
     private void spawnSuperWall(Vector2 pos)
     {
         Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
@@ -149,7 +154,9 @@ public class MapController : MonoBehaviour
             poolObjectDic[ObjectType.OuterWall].Add(outerWall);
         }
     }
-
+    /// <summary>
+    /// create the floor
+    /// </summary>
     private void createFloor()
     {
         for (int x = -(X + 1); x <= X - 1; x++)
@@ -160,11 +167,13 @@ public class MapController : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// spawn the floor
+    /// </summary>
+    /// <param name="pos"></param>
     private void spawnFloor(Vector2 pos)
     {
         Vector2 intPos = new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
-        // superWallPointList.Add(intPos);
 
         GameObject floor = ObjectPool.instance.Get(ObjectType.Floor, pos);
         if (poolObjectDic.ContainsKey(ObjectType.Floor) == false)
@@ -208,14 +217,6 @@ public class MapController : MonoBehaviour
         emptyPointList.Remove(new Vector2(X - 2, -Y - 1));
         emptyPointList.Remove(new Vector2(X - 1, -Y - 1));
         emptyPointList.Remove(new Vector2(X - 1, -Y));
-
-        // emptyPointList.Remove(new Vector2(X - 1, Y - 1));
-        // emptyPointList.Remove(new Vector2(X - 1, Y - 2));
-        // emptyPointList.Remove(new Vector2(X - 2, Y - 1));
-
-        // emptyPointList.Remove(new Vector2(-X - 1, -Y - 1));
-        // emptyPointList.Remove(new Vector2(-X - 1, -Y));
-        // emptyPointList.Remove(new Vector2(-X, -Y - 1));
     }
 
     /// <summary>
@@ -249,7 +250,9 @@ public class MapController : MonoBehaviour
             poolObjectDic[ObjectType.Wall].Add(wall);
         }
     }
-
+    /// <summary>
+    /// create the enemy wall, enemy is hidden under the wall
+    /// </summary>
     private void CreateEnemyWalls()
     {
         int count = 0;
@@ -277,7 +280,6 @@ public class MapController : MonoBehaviour
 
             GameObject enemyWall = ObjectPool.instance.Get(ObjectType.EnemyWall, pos);
 
-            // === 新增：随机设置敌人墙的Sprite ===
             if (enemyWallSprites != null && enemyWallSprites.Length > 0)
             {
                 SpriteRenderer renderer = enemyWall.GetComponent<SpriteRenderer>();
@@ -331,7 +333,6 @@ public class MapController : MonoBehaviour
             GameObject prop = ObjectPool.instance.Get(ObjectType.Prop, emptyPointList[index]);
             emptyPointList.RemoveAt(index);
 
-            // === 新增：随机设置道具的Sprite ===
             if (propSprites != null && propSprites.Length > 0)
             {
                 SpriteRenderer renderer = prop.GetComponent<SpriteRenderer>();

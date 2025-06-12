@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+/// <summary>
+/// The start scene implementation class
+/// </summary>
 public class StartScene : MonoBehaviour
 {
     public Button startButton;

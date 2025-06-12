@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+/// <summary>
+/// The victory page display implementation class
+/// </summary>
 public class VictoryScene : MonoBehaviour
 {
     public static VictoryScene instance;
@@ -20,7 +22,6 @@ public class VictoryScene : MonoBehaviour
 
     private void Awake()
     {
-        // 确保单例唯一性
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -28,10 +29,9 @@ public class VictoryScene : MonoBehaviour
         }
 
         instance = this;
-        gameObject.SetActive(false);  // 保持初始禁用状态
+        gameObject.SetActive(false);  
     }
 
-    // 添加对象销毁时的清理
     private void OnDestroy()
     {
         if (instance == this)
@@ -42,9 +42,13 @@ public class VictoryScene : MonoBehaviour
 
     public bool IsActive => gameObject.activeSelf;
 
+    /// <summary>
+    /// display the winner page
+    /// </summary>
+    /// <param name="winnerIndex"></param>
     public void display(int winnerIndex)
     {
-        // 获取胜利玩家索引
+        // Obtain the index of winning players
         gameObject.SetActive(true);
 
         if (winnerIndex == 1)
@@ -67,10 +71,13 @@ public class VictoryScene : MonoBehaviour
         mainMenuButton.onClick.RemoveAllListeners();
         mainMenuButton.onClick.AddListener(OnMainMenu);
     }
-
+    /// <summary>
+    /// display the finnal page
+    /// </summary>
+    /// <param name="winnerIndex"></param>
     public void displayFinalPage(int winnerIndex)
     {
-        // 获取胜利玩家索引
+        // Obtain the index of winning players
         gameObject.SetActive(true);
 
         if (winnerIndex == 1)
@@ -95,6 +102,10 @@ public class VictoryScene : MonoBehaviour
         returnMainMenuButton.onClick.RemoveAllListeners();
         returnMainMenuButton.onClick.AddListener(OnMainMenu);
     }
+
+    /// <summary>
+    /// display the failed page
+    /// </summary>
     public void displayFailed()
     {
         gameObject.SetActive(true);
@@ -106,30 +117,32 @@ public class VictoryScene : MonoBehaviour
         mainMenuButton.gameObject.SetActive(true);
 
         restartLevelButton.onClick.RemoveAllListeners();
-        restartLevelButton.onClick.AddListener(OnRestartLevel); // 修改为重新开始当前关卡
+        restartLevelButton.onClick.AddListener(OnRestartLevel); 
 
         mainMenuButton.onClick.RemoveAllListeners();
         mainMenuButton.onClick.AddListener(OnMainMenu);
     }
-
+    /// <summary>
+    /// player can restart the failed level
+    /// </summary>
     private void OnRestartLevel()
     {
-        Debug.Log("重新开始当前关卡");
         gameObject.SetActive(false);
         GameController.instance.RestartLevel();
     }
-
-    // 继续下一关
+    /// <summary>
+    /// Move on to the next level
+    /// </summary>
     private void OnNextLevel()
     {
-        Debug.Log("按了");
         gameObject.SetActive(false);
         GameController.instance.StartNextLevel();
     }
-
-    // 返回主菜单
+    /// <summary>
+    /// Return to the main menu
+    /// </summary>
     private void OnMainMenu()
     {
-        SceneManager.LoadScene("Start"); // 你的主菜单场景名称
+        SceneManager.LoadScene("Start"); 
     }
 }

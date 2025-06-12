@@ -1,15 +1,21 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// prop types class
+/// </summary>
 public enum PropType
 {
     HealthPoint,
     Bomb,
     BombRange,
-    Defence,  // Corrected casing
-    Speed     // Corrected casing
+    Defence, 
+    Speed 
 }
 
+/// <summary>
+/// prop type prefeb class
+/// </summary>
 [System.Serializable]
 public class PropTypePrefab
 {
@@ -18,6 +24,9 @@ public class PropTypePrefab
     public string animationName;  // Add animation name field
 }
 
+/// <summary>
+/// Prop controller classs
+/// </summary>
 public class PropController : MonoBehaviour
 {
     [Header("Prop Configuration")]

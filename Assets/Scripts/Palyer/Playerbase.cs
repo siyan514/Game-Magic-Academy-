@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// this is an abstract base class of player
+/// </summary>
 public abstract class PlayerBase : MonoBehaviour
 {
     // Player core attributes
@@ -93,17 +95,17 @@ public abstract class PlayerBase : MonoBehaviour
     public virtual void AddHealth()
     {
         HP++;
-        // if (GameUIController.instance != null)
-        //     GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
     }
 
     public virtual void UseBomb()
     {
         if (BombCount > 0) BombCount--;
     }
-    
-
-    // Damage effect coroutine
+    /// <summary>
+    /// Damage effect coroutine
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     protected IEnumerator InjuredEffect(float duration)
     {
         float timer = 0f;
@@ -129,8 +131,11 @@ public abstract class PlayerBase : MonoBehaviour
         if (spriteRenderer != null)
             spriteRenderer.color = originalColor;
     }
-
-    // Rainbow effect only for invincibility state
+    /// <summary>
+    /// Rainbow effect only for invincibility state
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     protected IEnumerator InvincibilityEffect(float duration)
     {
         float startTime = Time.time;
@@ -164,8 +169,11 @@ public abstract class PlayerBase : MonoBehaviour
         IsInvincible = false;
         currentInvincibilityCoroutine = null;
     }
-
-    // Gray invincibility coroutine
+    /// <summary>
+    /// Gray invincibility coroutine
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     protected IEnumerator TemporaryInvincibilityRoutine(float duration)
     {
         // Start gray flashing effect
@@ -175,8 +183,11 @@ public abstract class PlayerBase : MonoBehaviour
         IsInvincible = false;
         currentInvincibilityCoroutine = null;
     }
-
-    // Disable control coroutine
+    /// <summary>
+    /// Disable control coroutine
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     protected IEnumerator DisableControlRoutine(float duration)
     {
         IsActive = false;
@@ -200,19 +211,17 @@ public abstract class PlayerBase : MonoBehaviour
         // Disable rigidbody physics
         if (rig != null) rig.simulated = false;
 
-        // Play death animation (if exists)
-        // if (anim != null) anim.SetTrigger("Die");
 
         // Disappear from screen
         StartCoroutine(DisappearAfterDelay(0.5f));
-        // if (GameUIController.instance != null)
-            // GameUIController.instance.UpdatePlayerHealth(PlayerIndex, 0);
     }
-
-    // Delayed disappearance coroutine
+    /// <summary>
+    /// Delayed disappearance coroutine
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
     protected virtual IEnumerator DisappearAfterDelay(float delay)
     {
-        // Optional: Add disappearance effect (like fade-out)
         float timer = 0f;
         while (timer < delay)
         {

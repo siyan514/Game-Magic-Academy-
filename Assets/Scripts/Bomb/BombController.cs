@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
+/// <summary>
+/// Bomb explode implementation class
+/// </summary>
 public class BombController : MonoBehaviour
 {
     public GameObject bombEffect;
@@ -17,11 +19,15 @@ public class BombController : MonoBehaviour
         StartCoroutine("ExplosiveTime", explosiveTime);
         aniFinAction = action;
     }
-
+    /// <summary>
+    /// control the bomb explode
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
     IEnumerator ExplosiveTime(float time)
     {
         yield return new WaitForSeconds(time);
-        if(aniFinAction != null) { aniFinAction(); }
+        if (aniFinAction != null) { aniFinAction(); }
         CreateBombEffect(transform.position);
 
         Boom(Vector2.left);
@@ -30,7 +36,10 @@ public class BombController : MonoBehaviour
         Boom(Vector2.up);
         ObjectPool.instance.Add(ObjectType.Bomb, gameObject);
     }
-
+    /// <summary>
+    /// control the bomb effect
+    /// </summary>
+    /// <param name="pos"></param>
     private void CreateBombEffect(Vector2 pos)
     {
         GameObject effect = ObjectPool.instance.Get(ObjectType.BombEffect, pos);
@@ -40,13 +49,16 @@ public class BombController : MonoBehaviour
             bombEffectComponent.SetBombOwner(bombOwner);
         }
     }
-
-    private void Boom(Vector2 dir) 
+    /// <summary>
+    /// handle the bomb explode
+    /// </summary>
+    /// <param name="dir"></param>
+    private void Boom(Vector2 dir)
     {
-        for(int i = 1;i <= range; i++)
+        for (int i = 1; i <= range; i++)
         {
             Vector2 pos = (Vector2)transform.position + dir * i;
-            if(GameController.instance.IsSuperWall(pos)) break;
+            if (GameController.instance.IsSuperWall(pos)) break;
             CreateBombEffect(pos);
         }
     }

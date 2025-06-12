@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// The special destructible wall that contains enemy implementation class
+/// </summary>
 public class EnemyWallController : MonoBehaviour
 {
     private SpriteRenderer wallRenderer;
@@ -21,12 +23,12 @@ public class EnemyWallController : MonoBehaviour
         {
             GameObject enemyObj = Instantiate(enemyPrefab, transform.position, Quaternion.identity, transform);
             hiddenEnemy = enemyObj.GetComponent<AIEnemy>();
-            hiddenEnemy.gameObject.SetActive(false);  // 初始隐藏
+            hiddenEnemy.gameObject.SetActive(false);  // Initial hiding enemy
         }
     }
 
     /// <summary>
-    /// 重置为初始墙状态
+    /// Reset to the initial wall state
     /// </summary>
     private void ResetEnemyWall()
     {
@@ -38,16 +40,10 @@ public class EnemyWallController : MonoBehaviour
         {
             wallRenderer.enabled = true;
         }
-
-        // if (activeEnemy != null)
-        // {
-        //     Destroy(activeEnemy);
-        //     activeEnemy = null;
-        // }
     }
 
     /// <summary>
-    /// 处理炸弹效果触发
+    /// Deal with the bomb effect trigger
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -64,12 +60,12 @@ public class EnemyWallController : MonoBehaviour
     }
 
     /// <summary>
-    /// 激活敌人
+    /// Activate the enemy
     /// </summary>
     private void ActivateEnemy(PlayerBase bombOwner)
     {
         tag = "Untagged";
-        gameObject.layer = 0; // 默认层
+        gameObject.layer = 0;
         wallCollider.isTrigger = true;
 
         if (wallRenderer != null)
@@ -80,41 +76,9 @@ public class EnemyWallController : MonoBehaviour
         if (hiddenEnemy != null)
         {
             hiddenEnemy.gameObject.SetActive(true);
-            hiddenEnemy.transform.SetParent(null);  // 从墙的子物体中脱离
+            hiddenEnemy.transform.SetParent(null); 
             hiddenEnemy.Activate(bombOwner);
         }
-
-        // // 实例化敌人
-        // if (enemyPrefab != null)
-        // {
-        //     // 使用墙的世界坐标位置
-        //     Vector3 spawnPosition = transform.position;
-
-        //     // 添加调试信息
-        //     Debug.Log($"Spawning enemy at wall position: {spawnPosition}");
-
-        //     // 实例化敌人
-        //     activeEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-
-        //     // 确保敌人位置正确
-        //     Debug.Log($"Enemy instantiated at: {activeEnemy.transform.position}");
-
-        //     // 初始化敌人控制器
-        //     AIEnemy enemy = activeEnemy.GetComponent<AIEnemy>();
-        //     if (enemy != null)
-        //     {
-        //         enemy.Activate(bombOwner);
-        //         print("enemy.Activate(null);");
-        //         // 这里可以传递初始位置和炸弹所有者（暂时为null）
-        //         // enemy.Initialize(new Vector2Int((int)transform.position.x, (int)transform.position.y), null);
-        //     }
-        //     Destroy(gameObject);
-        // }
-        // else
-        // {
-        //     Debug.LogError("Enemy prefab is not assigned on EnemyWallController");
-        // }
-
         Destroy(gameObject);
     }
 

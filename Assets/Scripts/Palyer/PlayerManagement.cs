@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Manege all players class
+/// </summary>
 public class PlayerManagement : MonoBehaviour
 {
     public static PlayerManagement instance;
@@ -15,7 +17,10 @@ public class PlayerManagement : MonoBehaviour
         instance = this;
     }
 
-
+    /// <summary>
+    /// create the players
+    /// </summary>
+    /// <param name="mapController"></param>
     public void CreatePlayers(MapController mapController)
     {
         // Create Player 1
@@ -35,7 +40,9 @@ public class PlayerManagement : MonoBehaviour
             players.Add(player2);
         }
     }
-
+    /// <summary>
+    /// destroy all players 
+    /// </summary>
     public void DestroyAllPlayers()
     {
         foreach (PlayerBase player in players)

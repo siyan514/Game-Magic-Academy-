@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Prop collider handler class
+/// </summary>
 public class PropColliderHandler : MonoBehaviour
 {
     private PropController parentController;

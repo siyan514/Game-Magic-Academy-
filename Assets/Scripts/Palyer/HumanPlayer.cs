@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Human player controller class
+/// </summary>
 public class HumanPlayer : PlayerBase
 {
     private HumanInputHandler inputHandler;
@@ -78,9 +80,6 @@ public class HumanPlayer : PlayerBase
             // Activate 3-second gray invincibility effect
             ActivateInvincibility(3f, false);
         }
-
-        // if (GameUIController.instance != null)
-        //     GameUIController.instance.UpdatePlayerHealth(PlayerIndex, HP);
     }
 
     protected override IEnumerator DisappearAfterDelay(float delay)

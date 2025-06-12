@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Bomb effect implementation class
+/// </summary>
 public class BombEffect : MonoBehaviour
 {
     private PlayerBase bombOwner;

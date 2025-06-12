@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Object pool implementation class
+/// </summary>
 public enum ObjectType
 {
     SuperWall,
     Floor,
-
     Wall,
     Prop,
     Bomb,
