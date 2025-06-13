@@ -125,7 +125,6 @@ public class AIEnemy : MonoBehaviour
         }
         else
         {
-            // 对齐到整数格子
             transform.position = new Vector3(
                 Mathf.RoundToInt(transform.position.x),
                 Mathf.RoundToInt(transform.position.y),
